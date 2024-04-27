@@ -14,13 +14,17 @@ Esse arquivo foi desenvolvido tanto para a a disciplina de Engenharia de Softwar
 
 ##### Alunos:
 
-> Jackson Giovanni Castellain
+> Jackson Giovanni Castellain  
+
+
 >Matrícula: 2221101006
 
->> João Vitor Gomes Da Silva
+>> João Vitor Gomes Da Silva  
 >>Matrícula: 2221101024
 
->>>Valéria Faccin
+>>>Valéria Faccin  
+
+
 >>>Matrícula: 2221101011
 
 
