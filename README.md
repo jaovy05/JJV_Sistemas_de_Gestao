@@ -12,6 +12,19 @@ Esse arquivo foi desenvolvido tanto para a a disciplina de Engenharia de Softwar
 
 ## Desenvolvedores
 
+##### Alunos:
+
+> Jackson Giovanni Castellain
+>Matrícula: 2221101006
+
+>> João Vitor Gomes Da Silva
+>>Matrícula: 2221101024
+
+>>>Valéria Faccin
+>>>Matrícula: 2221101011
+
+
+
 <p>
 <a href="https://github.com/jaovy05"><img src="https://avatars.githubusercontent.com/u/115904295?v=4" alt="Imagem github Jaovy05" width="35" style="border-radius:50% !important"  button=false /></a>
 <a href="https://github.com/JacksonCastellain"><img src="https://avatars.githubusercontent.com/u/104081719?v=4" alt="Imagem github Jackson Castellain" width="35" style="border-radius:50% !important"  button=false /></a>
