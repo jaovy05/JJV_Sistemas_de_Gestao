@@ -7,7 +7,7 @@ Este projeto faz parte da grade curricular do 4° semestre do curso de ciências
  - Banco de dados I
  - Programação II
 
-O projeto até esse momento está organizado somente com uma pasta de documentação, que contém o arquivo de Requisitos Funcionais e o arquivo PNG do ModeloConceitual.
+O projeto até esse momento está organizado somente com uma pasta de documentação, que contém o arquivo de Requisitos Funcionais e o arquivo PNG do Modelo Conceitual.
 Esse arquivo foi desenvolvido tanto para a a disciplina de Engenharia de Software I quanto para a disciplina de Banco de Dados I.  
 
 ## Desenvolvedores
