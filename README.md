@@ -7,7 +7,7 @@ Este projeto faz parte da grade curricular do 4° semestre do curso de ciências
  - Banco de dados I
  - Programação II
 
-O projeto, até este momento, está organizado somente com uma pasta de Documentação, que contém o arquivo JJV-Sistemas_De_Gestão, no qual há a descrição dos requisitos funcionais, dos requisitos não funcionais, do diagrama de caso de uso e da prototipação das cinco telas principais da aplicação. Além desse arquivo, a pasta contém o arquivo PNG do Modelo Conceitual.
+O projeto, até este momento, está organizado somente com uma pasta de Documentação, que contém o arquivo em pdf JJV-Sistemas_De_Gestão, editado pelo [google docs](https://docs.google.com/document/d/1EHjn6bGpEK2aHdrJGw4xzbWC2PKlAjb9PvqVdZGpcsI/edit?usp=sharing). Nesse arquivo há a descrição dos requisitos funcionais, dos requisitos não funcionais, do diagrama de caso de uso e da prototipação das cinco telas principais da aplicação. Além desse arquivo, a pasta contém o arquivo fonte do Modelo Conceitual e em PNG.
 
 Esse arquivo foi desenvolvido tanto para a disciplina de Engenharia de Software I quanto para a disciplina de Banco de Dados I.  
 
