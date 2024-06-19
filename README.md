@@ -47,6 +47,6 @@ Além dessa pasta, há a pasta jjv, que contém o desenvolvimento incial do Proj
 [BADGE_WEB_REACT]: https://img.shields.io/badge/web-react-blue
 [BADGE_SERVER_NODEJS]: https://img.shields.io/badge/server-nodejs-important
 [BADGE_OPEN_SOURCE]: https://badges.frapsoft.com/os/v1/open-source.png?v=103
-[BADGE_NODE_VERSION]: https://img.shields.io/badge/node-12.18.0-green
-[BADGE_NPM_VERSION]: https://img.shields.io/badge/npm-6.14.4-red
+[BADGE_NODE_VERSION]: https://img.shields.io/badge/node-20.6.0-green
+[BADGE_NPM_VERSION]: https://img.shields.io/badge/npm-10.8.1-red
 
