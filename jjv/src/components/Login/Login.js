@@ -6,6 +6,8 @@ import './Login.css';
 function Login() {
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
+  const [msg, setMsg] = useState('');
+
   const navigate = useNavigate();
 
   const handleLogin = async () => {
@@ -21,19 +23,31 @@ function Login() {
   return (
     <div className='login'>
       <h1>Login</h1>
-      <input 
-        type="name" 
-        value={name} 
-        onChange={(e) => setName(e.target.value)} 
-        placeholder="Nome" 
+      <input
+        type="name"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Nome"
       />
-      <input 
-        type="password" 
-        value={password} 
-        onChange={(e) => setPassword(e.target.value)} 
-        placeholder="Senha" 
+      <input
+        type="password"
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        placeholder="Senha"
       />
-      <button onClick={handleLogin}>Login</button>
+      <div className='msgAlert'>{msg !== '' && <p>{msg}</p>}</div>
+      <button onClick={() => {
+        if (name === '') {
+          setMsg('Preencha o campo nome');
+          return
+        }
+        if (password === '') {
+          setMsg('Preencha o campo senha');
+          return false
+        }
+        setMsg('');
+        handleLogin();
+      }}>Login</button>
     </div>
   );
 }
