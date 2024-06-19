@@ -1,7 +1,5 @@
 # JJV_Sistemas_de_Gestão
 ![Badge em Desenvolvimento](http://img.shields.io/static/v1?label=STATUS&message=EM%20DESENVOLVIMENTO&color=GREEN&style=for-the-badge)
-
-
 ![BADGE_WEB_REACT] ![BADGE_SERVER_NODEJS] ![BADGE_OPEN_SOURCE] ![BADGE_NODE_VERSION] ![BADGE_NPM_VERSION]
 
 ## Descrição
@@ -39,3 +37,15 @@ Além dessa pasta, há a pasta jjv, que contém o desenvolvimento incial do Proj
 <a href="https://github.com/JacksonCastellain"><img src="https://avatars.githubusercontent.com/u/104081719?v=4" alt="Imagem github Jackson Castellain" width="35" style="border-radius:50% !important"  button=false /></a>
  <a href="https://github.com/valeriaFaccin"><img src="https://avatars.githubusercontent.com/u/105952105?v=4" alt="Imagem github Valéria Faccin" width="35" style="border-radius:50% !important"  button=false /></a>
 </p>
+
+
+
+
+<!-- Badges -->
+
+[BADGE_WEB_REACT]: https://img.shields.io/badge/web-react-blue
+[BADGE_SERVER_NODEJS]: https://img.shields.io/badge/server-nodejs-important
+[BADGE_OPEN_SOURCE]: https://badges.frapsoft.com/os/v1/open-source.png?v=103
+[BADGE_NODE_VERSION]: https://img.shields.io/badge/node-12.18.0-green
+[BADGE_NPM_VERSION]: https://img.shields.io/badge/npm-6.14.4-red
+
