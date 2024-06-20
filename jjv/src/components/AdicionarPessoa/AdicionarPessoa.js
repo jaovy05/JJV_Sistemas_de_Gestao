@@ -34,12 +34,8 @@ const AdicionarPessoa = ({ onAddPessoa }) => {
     }
   };
 
-  const Mystyle = {
-    maxWidth: '72%',
-  };
-
   return (
-    <div style={Mystyle}>
+    <div className='inputCadPessoa'>
       <input
         type="text"
         name="nome"
@@ -55,11 +51,11 @@ const AdicionarPessoa = ({ onAddPessoa }) => {
         placeholder="Email"
       />
       <input
-        type='date'
-        name='date'
-        value={pessoa.date}
+        type="text"
+        name="end_logra"
+        value={pessoa.end_logra}
         onChange={handleChange}
-        placeholder='Data'
+        placeholder="Endereço"
       />
       <input
         type='text'
@@ -70,17 +66,17 @@ const AdicionarPessoa = ({ onAddPessoa }) => {
       />
       <input
         type="text"
-        name="end_logra"
-        value={pessoa.end_logra}
-        onChange={handleChange}
-        placeholder="Endereço"
-      />
-      <input
-        type="text"
         name="telefone1"
         value={pessoa.telefone1}
         onChange={handleChange}
-        placeholder="Número"
+        placeholder="Número Telefone"
+      />
+      <input
+        type='date'
+        name='date'
+        value={pessoa.date}
+        onChange={handleChange}
+        placeholder='Data'
       />
       <button className='addButton' onClick={handleAddPessoa}>Adicionar Pessoa</button>
     </div>

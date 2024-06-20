@@ -1,0 +1,12 @@
+.table{
+  max-width: 72%;
+  min-width: 70%;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  align-self: flex-end;
+  margin-top: 10em; 
+  margin-right: 1%;
+  position: absolute;
+  border-radius: 8px;
+}

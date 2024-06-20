@@ -7,8 +7,8 @@ function Home() {
   return (
     <div className='navhome'>
         <Navbar/>
+        <h1>Pedidos em andamento</h1>
         <TableHome className='table'/>
-        <h1>Home</h1>
     </div>
   )
 }

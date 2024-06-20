@@ -54,7 +54,7 @@ app.post('/login', async (req, res) => {
 });
 
 // Rotas protegidas
-app.get('/home', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/cadastro/pessoa', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const pessoas = await database.getPessoa();
     res.json(pessoas);
@@ -63,7 +63,7 @@ app.get('/home', passport.authenticate('jwt', { session: false }), async (req, r
   }
 });
 
-app.post('/home', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/cadastro/pessoa', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const pessoa = req.body;
     const novaPessoa = await database.createPessoa(pessoa);

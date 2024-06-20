@@ -13,7 +13,7 @@ function Navbar() {
             <Link className="link" to="/home">Home</Link>
         </button>
         <button className="button">
-          <Link className="link"to="/about">About</Link>
+          <Link className="link"to="/cadastro/pessoa">Cadastrar Pessoa</Link>
         </button>
       </nav>
     </div>

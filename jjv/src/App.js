@@ -2,8 +2,8 @@ import React  from 'react';
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Home from './components/Home/Home';
-import About from './components/About/About';
 import Login from './components/Login/Login';
+import CadastroPessoa from './components/CadastroPessoa/CadastroPessoa';
 
 function App() {
   
@@ -12,7 +12,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Login/>} />
         <Route path='/home' element={<Home />} />
-        <Route path='/about' element={<About />} />
+        <Route path='/cadastro/pessoa' element={<CadastroPessoa />} />
       </Routes>
     </div>
   );
