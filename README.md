@@ -12,7 +12,7 @@ Este projeto faz parte da grade curricular do 4° semestre do curso de ciências
 O projeto, até este momento, está organizado com uma pasta de Documentação, que contém o arquivo em pdf JJV-Sistemas_De_Gestão, editado pelo [google docs](https://docs.google.com/document/d/1EHjn6bGpEK2aHdrJGw4xzbWC2PKlAjb9PvqVdZGpcsI/edit?usp=sharing).
 
 Nesse arquivo há a descrição dos Requisitos Funcionais, dos Requisitos Não Funcionais, do Diagrama de Caso de Uso, da Prototipação e do Desenvolvimento Guiado por Comportamento das cinco telas principais da aplicação. 
-Além desse arquivo, a pasta contém o arquivo fonte do Modelo Conceitual e sua Imagem em PNG, e a Imagem do Modelo Lógico do banco.
+Além desse arquivo, a pasta contém o arquivo fonte do Modelo Conceitual e sua Imagem em PNG, a Imagem do Modelo Lógico do banco e um txt com o código para gerá-la no [dbdiagram.io](https://dbdiagram.io/home).
 
 Esse arquivo foi desenvolvido tanto para a disciplina de Engenharia de Software I quanto para a disciplina de Banco de Dados I. 
 

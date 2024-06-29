@@ -1,0 +1,95 @@
+Table pedido as pd{
+  op int [not null, pk]
+  cod int [not null]
+  pedido int [not null]
+  comp varchar(2) [not null]
+  qtdp int [not null]
+  qtdm int [not null]
+  qtdg int [not null]
+  qtdgg int [not null]
+  qtdxgg int [not null]
+  avm text
+  obs text
+  cnpj_cli varchar(14) [not null, ref: > cli.cnpj]
+  cof_func varchar(11) [not null, ref: > func.cpf]
+  codt int [not null, ref: > tcd.cod]
+}
+
+table tecido as tcd{
+  cod int [not null, pk]
+  nome varchar(120) [not null]
+  dsc text [not null] 
+}
+
+table corte as ct{
+  tam varchar(3) [not null, pk]
+  qtd int [not null]
+  codp int [not null, pk, ref: > pd.op]
+}
+
+Table encaminha {
+  qtd_env int [not null]
+  os_serv int [not null, pk, ref: > s.os]
+  tam_ct varchar(3) [not null, pk, ref: > ct.tam]
+  cod_p int [not null, pk, ref: > ct.codp]
+}
+
+table servico as s {
+  os int [not null, pk]
+  data_ter date [not null]
+  data_esperada date [not null]
+  data_ent date
+}
+
+Table serv_op {
+  cod_op int [not null, pk, ref: > op.cod]
+  os_serv int [not null, pk, ref: > s.os]
+}
+
+Table operacao as op {
+  cod int [not null, pk]
+  valor int [not null]
+  dsc varchar(120) [not null]
+}
+
+Table serv_ter {
+  cnpj_ter varchar(14) [not null, pk, ref: > ter.cnpj]
+  os_serv int [not null, pk, ref: > s.os]
+}
+
+Table terceirizado as ter {
+  cnpj varchar(14) [not null, pk]
+  codp int [not null, ref: > p.cod]
+}
+
+Table cliente as cli {
+  cnpj varchar(14) [not null, pk]
+  codp int [not null, ref: > p.cod]
+}
+
+Table modelo {
+  cod int [not null, pk]
+  des varchar(120) [not null]
+  cnpj_cli varchar(14) [not null, ref: > cli.cnpj]
+}
+
+table funcionario as func {
+  cpf varchar(11) [not null, pk]
+  senha text [not null]
+  pis varchar(11) [not null]
+  adm int
+  codp int [not null, ref: > p.cod]
+}
+
+table pessoa as p {
+  cod int [not null, pk]
+  nome varchar(146) [not null]
+  email varchar(157) [not null]
+  date date [not null]
+  inativo int
+  endn int [not null]
+  end_logra varchar(200) [not null]
+  telefone1 varchar(11) [not null]
+  telefone2 varchar(11)
+}
+
