@@ -1,4 +1,4 @@
-const { USER, HOST, DATABASE, PASSWORD, PORT } = require("./Auth/Auth");
+/* const { USER, HOST, DATABASE, PASSWORD, PORT } = require("./Auth");
 const { Pool } = require("pg");
 const pool = new Pool({
   user: USER,
@@ -25,8 +25,8 @@ const getPessoa = async () => {
 const createPessoa = async (pessoa) => {
   try {
     const result = await pool.query(
-      "INSERT INTO pessoa (nome, email, date, endn, end_logra, telefone1) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [pessoa.nome, pessoa.email, pessoa.date, pessoa.endn, pessoa.end_logra, pessoa.telefone1]
+      "INSERT INTO pessoa (nome, email, date, endn, end_logra, telefone1, telefone2) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
+      [pessoa.nome, pessoa.email, pessoa.date, pessoa.endn, pessoa.end_logra, pessoa.telefone1,]
     );
     if (result && result.rows && result.rows.length > 0) {
       return result.rows[0];
@@ -101,3 +101,4 @@ module.exports = {
   getPessoaById,
   deletePessoa,
 };
+ */
