@@ -1,3 +1,4 @@
+import './CadastroPessoa.css';
 import { Link } from "react-router-dom";
 import React from 'react';
 import { styled } from '@mui/material/styles';
@@ -15,11 +16,10 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Button from '@mui/material/Button';
 import ListItemButton from '@mui/material/ListItemButton';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import TableHome from '../TableHome/TableHome';
+import TablePessoa from '../TablePessoa/TablePessoa';
 import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
-import './Home.css';
 
 const drawerWidth = 240;
 
@@ -85,7 +85,6 @@ export default function PersistentDrawerLeft() {
     },
   });
 
-
   const dropDownCad = () => {
     setOpenCadastro(!openCad);
   };
@@ -128,9 +127,9 @@ export default function PersistentDrawerLeft() {
         </DrawerHeader>
         <Divider />
         <List>
-          <ListItemButton sx={{ display: 'flex', flexDirection: 'column', gap:1 }}>
+          <ListItemButton  sx={{display: 'flex', flexDirection: 'column', gap:1}}>
             <ThemeProvider theme={theme}>
-              <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/">Sair</Link></Button>
+            <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/">Sair</Link></Button>
               <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/home">Início</Link></Button>
               <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={dropDownCad} className="link1">
                 Cadastros{openCad ? <ExpandLess /> : <ExpandMore />}
@@ -150,12 +149,12 @@ export default function PersistentDrawerLeft() {
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
-        <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', my: 4 }}>
+        <Box sx={{  display: 'flex', flexDirection: 'row' , justifyContent: 'center', my: 4}}>
           <Typography variant="h6">
-            Serviços em andamento
+            Tabela de Pessoas
           </Typography>
         </Box>
-        <TableHome />
+        <TablePessoa/>
       </Main>
     </Box >
   );
