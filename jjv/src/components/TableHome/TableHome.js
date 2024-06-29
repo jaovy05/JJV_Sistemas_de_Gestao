@@ -6,6 +6,7 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { Grid } from '@mui/material';
 
 function createData(pedido, terceirizado, data, status) {
   return { pedido, terceirizado, data, status };
@@ -21,31 +22,33 @@ const rows = [
 
 export default function BasicTable() {
   return (
-    <TableContainer component={Paper}>
-      <Table sx={{ width: '100%' }} size="lg"
-        stripe="even"
-        variant="soft">
-        <TableHead>
-          <TableRow>
-            <TableCell>Pedido</TableCell>
-            <TableCell>Terceirizado</TableCell>
-            <TableCell>Data</TableCell>
-            <TableCell>Status</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {rows.map((row) => (
-            <TableRow
-              key={row.pedido}
-            >
-              <TableCell>{row.pedido}</TableCell>
-              <TableCell>{row.terceirizado}</TableCell>
-              <TableCell>{row.data}</TableCell>
-              <TableCell>{row.status}</TableCell>
+    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+      <TableContainer component={Paper} sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
+        <Table sx={{ width: '100%' }} size="lg"
+          stripe="even"
+          variant="soft">
+          <TableHead>
+            <TableRow>
+              <TableCell>Pedido</TableCell>
+              <TableCell>Terceirizado</TableCell>
+              <TableCell>Data</TableCell>
+              <TableCell>Status</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {rows.map((row) => (
+              <TableRow
+                key={row.pedido}
+              >
+                <TableCell>{row.pedido}</TableCell>
+                <TableCell>{row.terceirizado}</TableCell>
+                <TableCell>{row.data}</TableCell>
+                <TableCell>{row.status}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Grid>
   );
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, IconButton, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip } from '@mui/material';
+import { Box, Grid, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Modal from '@mui/joy/Modal';
@@ -9,6 +9,7 @@ import Typography from '@mui/joy/Typography';
 import Sheet from '@mui/joy/Sheet';
 import Icon from '@mdi/react';
 import { mdiSquareEditOutline, mdiDeleteForeverOutline } from '@mdi/js';
+
 
 
 function TablePessoa() {
@@ -139,15 +140,15 @@ function TablePessoa() {
 
     //criar colunas
     const columns = [
-      { id: 'cod', label: 'Código', minWidth: 20 },
-      { id: 'nome', label: 'Nome', minWidth: 100 },
-      { id: 'email', label: 'Email', minWidth: 190, },
-      { id: 'date', label: 'Data', minWidth: 100, align: 'right', },
-      { id: 'end_logra', label: 'Endereço', minWidth: 170, align: 'right', },
-      { id: 'endn', label: 'Número', minWidth: 20 },
-      { id: 'telefone1', label: 'Telefone', minWidth: 100 },
-      { id: 'edit', label: 'Editar', minWidth: 20 },
-      { id: 'delete', label: 'Deletar', minWidth: 20 }
+      { id: 'cod', label: 'Código' },
+      { id: 'nome', label: 'Nome', },
+      { id: 'email', label: 'Email' },
+      { id: 'date', label: 'Data', align: 'right', },
+      { id: 'end_logra', label: 'Endereço', align: 'right', },
+      { id: 'endn', label: 'Número' },
+      { id: 'telefone1', label: 'Telefone' },
+      { id: 'edit', label: 'Editar' },
+      { id: 'delete', label: 'Deletar' }
     ];
 
     // Format date
@@ -220,33 +221,37 @@ function TablePessoa() {
         gap: 3,
       }}>
         <ThemeProvider theme={theme}>
-
+          <Stack spacing={2}  useFlexGap flexWrap="wrap"
+            direction={{ sm: 'column', md: 'row' }} sx={{ minWidth:1 }}>
+            <TextField
+              color='green'
+              focused
+              id='outlined-basic'
+              size="small"
+              sx={{ width: '49%' }}
+              label="Nome"
+              name='nome'
+              value={novaPessoa.nome}
+              onChange={newPerson}
+            />
+            <TextField
+              color='green'
+              focused
+              size="small"
+              sx={{ width: '49%' }}
+              label="Email"
+              name='email'
+              value={novaPessoa.email}
+              onChange={newPerson}
+            />
+          </Stack>
+          <Stack spacing={2}  useFlexGap flexWrap="wrap"
+            direction={{ sm: 'column', md: 'row' }} sx={{ minWidth:1 }}>
           <TextField
             color='green'
             focused
-            id='outlined-basic'
             size="small"
-            sx={{ width: '45%' }}
-            label="Nome"
-            name='nome'
-            value={novaPessoa.nome}
-            onChange={newPerson}
-          />
-          <TextField
-            color='green'
-            focused
-            size="small"
-            sx={{ width: '45%' }}
-            label="Email"
-            name='email'
-            value={novaPessoa.email}
-            onChange={newPerson}
-          />
-          <TextField
-            color='green'
-            focused
-            size="small"
-            sx={{ width: '65%' }}
+            sx={{ width: '64%' }}
             label="Endereço"
             name='end_logra'
             value={novaPessoa.end_logra}
@@ -256,17 +261,20 @@ function TablePessoa() {
             color='green'
             focused
             size="small"
-            sx={{ width: '30%' }}
+            sx={{ width: '34%' }}
             label="Número"
             name='endn'
             value={novaPessoa.endn}
             onChange={newPerson}
           />
+          </Stack>
+          <Stack spacing={2}  useFlexGap flexWrap="wrap"
+            direction={{ sm: 'column', md: 'row' }} sx={{ minWidth:1 }}>
           <TextField
             color='green'
             focused
             size="small"
-            sx={{ width: '45%' }}
+            sx={{ width: '49%' }}
             type='date'
             label="Data"
             name='date'
@@ -277,17 +285,19 @@ function TablePessoa() {
             color='green'
             focused
             size="small"
-            sx={{ width: '45%' }}
+            sx={{ width: '49%' }}
             label="Telefone"
             name='telefone1'
             value={novaPessoa.telefone1}
             onChange={newPerson}
           />
+          </Stack>
           <Button variant="contained" color="other" sx={{ width: '25%' }} onClick={AddPessoa}>Adicionar Pessoa</Button>
         </ThemeProvider>
-        <Paper sx={{ width: '100%' }}>
-          <TableContainer sx={{ maxHeight: 440 }}>
-            <Table aria-label="sticky table"
+        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
+          <TableContainer >  
+            {/* sx={{ width: '100%', display: 'table', tableLayout: 'fixed' }} */}
+            <Table
               size="lg"
               stripe="even"
               variant="soft">
@@ -335,11 +345,11 @@ function TablePessoa() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-        </Paper>
+        </Grid>
       </Box>
     );
   };
-  
+
   const theme = createTheme({
     palette: {
       green: {
@@ -350,7 +360,7 @@ function TablePessoa() {
       },
     },
   });
-  
+
   return (
     <div>
       <AdicionarPessoa addNewPessoa={(novaPessoa) => setPessoas([...pessoas, novaPessoa])} />
