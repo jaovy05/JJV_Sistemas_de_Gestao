@@ -10,7 +10,7 @@ const pool = new Pool({
 
 const getPessoa = async () => {
   try {
-    const result = await pool.query("SELECT * FROM pessoa");
+    const result = await pool.query("SELECT * FROM pessoa ORDER BY cod DESC");
     if (result && result.rows) {
       return result.rows;
     } else {
@@ -32,6 +32,23 @@ const createPessoa = async (pessoa) => {
       return result.rows[0];
     } else {
       throw new Error("Não foi possível criar pessoa");
+    }
+  } catch (error) {
+    console.error(error);
+    throw new Error("Erro interno do servidor");
+  }
+};
+
+const updatePessoa = async (id, pessoa) => {
+  try {
+    const result = await pool.query(
+      "UPDATE pessoa SET nome = $1, email = $2, date = $3, endn = $4, end_logra = $5, telefone1 = $6 WHERE cod = $7 RETURNING *",
+      [pessoa.nome, pessoa.email, pessoa.date, pessoa.endn, pessoa.end_logra, pessoa.telefone1, id]
+    );
+    if (result && result.rows && result.rows.length > 0) {
+      return result.rows[0];
+    } else {
+      throw new Error("Não foi possível atualizar pessoa");
     }
   } catch (error) {
     console.error(error);
@@ -67,9 +84,20 @@ const getPessoaById = async (id) => {
   }
 };
 
+const deletePessoa = async (id) => {
+  try {
+    await pool.query("DELETE FROM pessoa WHERE cod = $1", [id]);
+  } catch (error) {
+    console.error(error);
+    throw new Error("Erro interno do servidor");
+  }
+};
+
 module.exports = {
   getPessoa,
   createPessoa,
+  updatePessoa,
   getPessoaByName,
   getPessoaById,
+  deletePessoa,
 };

@@ -5,7 +5,7 @@ const passport = require('passport');
 const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
-
+const cors = require('cors');
 const database = require('./Database');
 
 const opts = {
@@ -28,11 +28,17 @@ passport.use(new JwtStrategy(opts, function (jwt_payload, done) {
 app.use(express.json());
 app.use(passport.initialize());
 
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-  next();
-});
+// app.use(function (req, res, next) {
+//   res.header("Access-Control-Allow-Origin", "*");
+//   res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+//   next();
+// });
+
+app.use(cors({
+  origin: 'http://localhost:3000', // Permite requisições deste domínio
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Métodos permitidos
+  allowedHeaders: ['Content-Type', 'X-Requested-With,','Accept','Origin','Authorization'] // Cabeçalhos permitidos
+}));
 
 app.post('/login', async (req, res) => {
   try {
@@ -54,7 +60,7 @@ app.post('/login', async (req, res) => {
 });
 
 // Rotas protegidas
-app.get('/cadastro/pessoa', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.get('/cadastrar/pessoas', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const pessoas = await database.getPessoa();
     res.json(pessoas);
@@ -63,11 +69,32 @@ app.get('/cadastro/pessoa', passport.authenticate('jwt', { session: false }), as
   }
 });
 
-app.post('/cadastro/pessoa', passport.authenticate('jwt', { session: false }), async (req, res) => {
+app.post('/cadastrar/pessoas', passport.authenticate('jwt', { session: false }), async (req, res) => {
   try {
     const pessoa = req.body;
     const novaPessoa = await database.createPessoa(pessoa);
     res.status(201).json(novaPessoa);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/cadastrar/pessoas/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  try {
+    const id = req.params.id;
+    const pessoa = req.body;
+    const updatedPessoa = await database.updatePessoa(id, pessoa);
+    res.json(updatedPessoa);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/cadastrar/pessoas/:id', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  try {
+    const id = req.params.id;
+    await database.deletePessoa(id);
+    res.json({ message: 'Pessoa removida com sucesso' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
