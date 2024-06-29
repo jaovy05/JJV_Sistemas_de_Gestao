@@ -7,13 +7,13 @@ import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 function Login() {
-  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
   const entrar = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/login', { name, password });
+      const response = await axios.post('http://localhost:5000/login', { email, password });
       localStorage.setItem('token', response.data.token);
       navigate('/home');
     } catch (error) {
@@ -47,9 +47,9 @@ function Login() {
             focused
             size='small'
             label="Nome"
-            name='name'
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            name='email'
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
           />
           <TextField
             color='green'
