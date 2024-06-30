@@ -35,17 +35,19 @@ passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
       } 
     
   } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) {
-      console.log("Erro ao remover funcionario. Não existe o cod informado");
-      return done(null, false);
-    } else {
+    
       console.log(error);
       return done(null, false);
-    }
+    
   }
  
 }));
  
+const adm = (req, res, next) => {
+  if (req.user && req.user.adm) return next();
+  return res.status(403).json({menssage: "Não tem permissão de administrador."});
+}
+
 app.use(express.json());
 app.use(passport.initialize());
 
