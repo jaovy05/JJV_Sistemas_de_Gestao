@@ -27,23 +27,26 @@ passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
       [jwt_payload.sub]);
 
       if (user) {
+        user.adm = jwt_payload.adm === 1
         return done(null, user);
       } else {
         return done(null, false);
       } 
     
   } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) {
-      console.log("Erro ao remover funcionario. Não existe o cod informado");
-      return done(null, false);
-    } else {
+    
       console.log(error);
       return done(null, false);
-    }
+    
   }
  
 }));
  
+const adm = (req, res, next) => {
+  if (req.user && req.user.adm) return next();
+  return res.status(403).json({menssage: "Não tem permissão de administrador."});
+}
+
 app.use(express.json());
 app.use(passport.initialize());
 
@@ -63,7 +66,7 @@ app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await db.one(
-      "SELECT f.senha, p.* FROM pessoa as p " +
+      "SELECT f.senha, f.adm, p.email FROM pessoa as p " +
       "join funcionario as f on p.cod = f.codp WHERE email = $1", 
       [email]
     );
@@ -74,11 +77,11 @@ app.post('/login', async (req, res) => {
     );
 
     if (user && passwordMatch) {
-      const payload = { sub: user.cod };
+      const payload = { sub: user.cod, adm: user.adm};
       const token = jwt.sign(payload, opts.secretOrKey, {
         issuer: opts.issuer,
         audience: opts.audience
-      });
+      }, { expiresIn: '10h' });
       res.json({ message: 'Authenticated', token });
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
@@ -205,6 +208,61 @@ app.post('/funcionario', auth, async(req, res) => {
     else  res.status(500).json({ error: error.message});
   }
 });
+
+app.get('/operacao', auth, async(req, res) => {
+  try {
+    const operacoes = await db.any(
+      "select * from operacao;"
+    );
+    res.status(200).json(operacoes);
+  } catch (error) {
+    res.status(500).json({ error: error});
+  }
+});
+
+app.post('/operacao', auth, adm, async(req, res) => {
+  try {
+    const operacao = req.body;
+    await db.none(
+      "insert into operacao (cod, dsc, valor) " +
+      "values ($1, $2, $3)",
+      [operacao.cod, operacao.dsc, operacao.valor]
+    );
+    res.status(201).json({menssage: "Operação " + operacao.dsc +" Criada."})
+  } catch (error) {
+    res.status(500).json({ error: error});
+  }
+});
+
+app.put('/operacao/:cod', auth, adm, async(req, res) => {
+  try {
+    const cod = parseInt(req.params.cod);
+    const operacao = req.body;
+    await db.one(
+      "update operacao set dsc = $1, valor = $2 " +
+      "where cod = $3 returning cod",
+      [operacao.dsc, operacao.valor, cod]
+    );
+    res.status(200).json({menssage: "Operação " + operacao.dsc +" Atualizada."})
+  } catch (error) {
+    res.status(500).json({ error: error});
+  }
+})
+
+app.delete('/operacao/:cod', auth, adm, async(req, res) => {
+  try {
+    const cod = parseInt(req.params.cod);
+    await db.one(
+      "delete from operacao where cod = $1 returning cod",
+      [cod]
+    );
+    res.status(200).json({menssage: "Operação deletada."})
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao deletar op: " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+})
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
