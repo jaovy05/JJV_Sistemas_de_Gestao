@@ -90,6 +90,11 @@ export default function PersistentDrawerLeft() {
     setOpenCadastro(!openCad);
   };
 
+  const handleLogout = () => {
+		// Clear the token from localStorage
+		localStorage.removeItem("token");
+	};
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -130,7 +135,7 @@ export default function PersistentDrawerLeft() {
         <List>
           <ListItemButton sx={{ display: 'flex', flexDirection: 'column', gap:1 }}>
             <ThemeProvider theme={theme}>
-              <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/">Sair</Link></Button>
+              <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={handleLogout} ><Link className="link1" to="/">Sair</Link></Button>
               <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/home">Início</Link></Button>
               <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={dropDownCad} className="link1">
                 Cadastros{openCad ? <ExpandLess /> : <ExpandMore />}
