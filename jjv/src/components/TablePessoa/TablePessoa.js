@@ -482,5 +482,3 @@ function TablePessoa() {
 }
 
 export default TablePessoa;
-
-
