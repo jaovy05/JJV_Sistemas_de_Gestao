@@ -208,6 +208,7 @@ export default function App() {
                     <List component="div" disablePadding>
                       <ListItemButton sx={{ pl: 4 }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1">Cadastrar Tecido</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/operacao">Cadastrar Operacao</Link></Button>
                       </ListItemButton>
                     </List>
                   </Collapse>
