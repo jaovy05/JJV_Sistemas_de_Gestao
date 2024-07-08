@@ -1,4 +1,4 @@
-/* const { USER, HOST, DATABASE, PASSWORD, PORT } = require("./Auth");
+/* const { USER, HOST, DATABASE, PASSWORD, PORT } = require("./Auth/Auth");
 const { Pool } = require("pg");
 const pool = new Pool({
   user: USER,
