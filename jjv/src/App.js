@@ -27,7 +27,8 @@ import { Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CadastroFuncionario from './components/Funcionario/CadastroFuncionario';
-
+import Servico from './components/Servico/Servico';
+import Operacao from './components/Operacao/Operacao'
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -232,6 +233,8 @@ export default function App() {
                 <Route path='/home' element={<Home />} />
                 <Route path='/cadastrar/pessoas' element={<CadastroPessoa />} />
                 <Route path='/funcionario' element={<CadastroFuncionario />} />
+                <Route path='/servico' element={<Servico />} />
+                <Route path='/operacao' element={<Operacao />} />
               </Routes>
             </Box>
           </Main>
