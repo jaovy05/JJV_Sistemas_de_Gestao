@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Box, Grid, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip } from '@mui/material';
+import { Box, Grid, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, Tooltip, useMediaQuery } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import Button from '@mui/material/Button';
 import Modal from '@mui/joy/Modal';
@@ -38,7 +38,8 @@ function TablePessoa() {
   }, []);
   //
 
-
+  const isMobile = useMediaQuery('(max-width:600px)');
+  
   //abrir modal
   const OpenModal = (pessoa) => {
     setPessoaSelecionada(pessoa);
@@ -52,7 +53,6 @@ function TablePessoa() {
     const { name, value } = e.target;
     setPessoaSelecionada(prevPessoa => ({ ...prevPessoa, [name]: value }));
   };
-  //
 
   //envia a requisição para editar pessoa[PUT]
   const handleEditPessoa = async () => {
@@ -80,7 +80,7 @@ function TablePessoa() {
 
   //seta o estado inicial da nova pessoa
   const AdicionarPessoa = ({ addNewPessoa }) => {
-    const [novaPessoa, setNovaPessoa] = useState({ nome: '', email: '', date: '', endn: '', end_logra: '', telefone1: '' });
+    const [novaPessoa, setNovaPessoa] = useState({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '' });
 
 
     //adiciona nova pessoa
@@ -89,15 +89,6 @@ function TablePessoa() {
       setNovaPessoa(prevPessoa => ({ ...prevPessoa, [name]: value }));
     };
     //
-
-    const handleDateChange = (event) => {
-      setNovaPessoa((prevPessoa) => ({
-        ...prevPessoa,
-        date: event.target.value,
-      }));
-    };
-
-
     //envia a requisição para adicionar pessoa[POST]
     const AddPessoa = async () => {
       try {
@@ -110,11 +101,10 @@ function TablePessoa() {
             },
           });
 
-        if (response.status === 201) {
+        if (response.status === 200) {
           const novaPessoaAdicionada = response.data;
           addNewPessoa(novaPessoaAdicionada);
-          setNovaPessoa({ nome: '', email: '', date: '', endn: '', end_logra: '', telefone1: '' });
-          window.location.reload(); //gambiarra para atualizar a página
+          setNovaPessoa({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '' });
         } else {
           console.error(`Erro ao adicionar pessoa: ${response.status} - ${response.statusText}`);
         }
@@ -143,31 +133,29 @@ function TablePessoa() {
       { id: 'cod', label: 'Código' },
       { id: 'nome', label: 'Nome', },
       { id: 'email', label: 'Email' },
-      { id: 'date', label: 'Data', align: 'right', },
+      { id: 'data', label: 'Data', align: 'right', },
       { id: 'end_logra', label: 'Endereço', align: 'right', },
       { id: 'endn', label: 'Número' },
-      { id: 'telefone1', label: 'Telefone' },
+      { id: 'telefone1', label: 'Telefone1' },
+      { id: 'telefone2', label: 'Telefone2' },
       { id: 'edit', label: 'Editar' },
       { id: 'delete', label: 'Deletar' }
     ];
+    //
 
     // Format date
-
-
     function formatDate(dateString) {
       const date = new Date(dateString);
       const year = date.getFullYear();
       const month = String(date.getMonth() + 1).padStart(2, '0');
       const day = String(date.getDate()).padStart(2, '0');
-      return `${year}-${month}-${day}`;
+      return `${day}-${month}-${year}`;
     }
-
-
 
     //criar linhas popula a tabela
     const rows = pessoas.map(pessoa => ({
       ...pessoa,
-      date: formatDate(pessoa.date),
+      data: formatDate(pessoa.data),
       edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(pessoa)}>
         <Icon path={mdiSquareEditOutline} size={1} />
       </IconButton></Tooltip>,
@@ -209,7 +197,6 @@ function TablePessoa() {
     }
     //
 
-
     return (
       <Box component="form" sx={{
         width: 'auto',
@@ -221,14 +208,14 @@ function TablePessoa() {
         gap: 3,
       }}>
         <ThemeProvider theme={theme}>
-          <Stack spacing={2}  useFlexGap flexWrap="wrap"
-            direction={{ sm: 'column', md: 'row' }} sx={{ minWidth:1 }}>
+          <Stack useFlexGap flexWrap="wrap"
+            direction={{ xs: 'column', sm: 'row' }} spacing={{ xs: 2 }} sx={{ minWidth: 1 }}>
             <TextField
               color='green'
               focused
               id='outlined-basic'
               size="small"
-              sx={{ width: '49%' }}
+              sx={{ minWidth: isMobile ? '100%' : '49%' }}
               label="Nome"
               name='nome'
               value={novaPessoa.nome}
@@ -238,113 +225,125 @@ function TablePessoa() {
               color='green'
               focused
               size="small"
-              sx={{ width: '49%' }}
+              sx={{ minWidth: isMobile ? '100%' : '49%' }}
               label="Email"
               name='email'
               value={novaPessoa.email}
               onChange={newPerson}
             />
           </Stack>
-          <Stack spacing={2}  useFlexGap flexWrap="wrap"
-            direction={{ sm: 'column', md: 'row' }} sx={{ minWidth:1 }}>
-          <TextField
-            color='green'
-            focused
-            size="small"
-            sx={{ width: '64%' }}
-            label="Endereço"
-            name='end_logra'
-            value={novaPessoa.end_logra}
-            onChange={newPerson}
-          />
-          <TextField
-            color='green'
-            focused
-            size="small"
-            sx={{ width: '34%' }}
-            label="Número"
-            name='endn'
-            value={novaPessoa.endn}
-            onChange={newPerson}
-          />
+          <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
+            direction={{ xs: 'column', sm: 'row' }} sx={{ minWidth: 1 }}>
+            <TextField
+              color='green'
+              focused
+              size="small"
+              sx={{ minWidth: isMobile ? '100%' : '64%' }}
+              label="Endereço"
+              name='end_logra'
+              value={novaPessoa.end_logra}
+              onChange={newPerson}
+            />
+            <TextField
+              color='green'
+              focused
+              size="small"
+              sx={{ minWidth: isMobile ? '100%' : '34%' }}
+              label="Número"
+              name='endn'
+              value={novaPessoa.endn}
+              onChange={newPerson}
+            />
           </Stack>
-          <Stack spacing={2}  useFlexGap flexWrap="wrap"
-            direction={{ sm: 'column', md: 'row' }} sx={{ minWidth:1 }}>
-          <TextField
-            color='green'
-            focused
-            size="small"
-            sx={{ width: '49%' }}
-            type='date'
-            label="Data"
-            name='date'
-            value={novaPessoa.date}
-            onChange={handleDateChange}
-          />
-          <TextField
-            color='green'
-            focused
-            size="small"
-            sx={{ width: '49%' }}
-            label="Telefone"
-            name='telefone1'
-            value={novaPessoa.telefone1}
-            onChange={newPerson}
-          />
+          <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
+            direction={{ xs: 'column', sm: 'row' }} sx={{ minWidth: 1 }}>
+            <TextField
+              color='green'
+              focused
+              size="small"
+              sx={{ minWidth: isMobile ? '100%' : '32%' }}
+              type='date'
+              label="Data"
+              name='data'
+              value={novaPessoa.data}
+              onChange={(e) => setNovaPessoa((prevPessoa) => ({ ...prevPessoa, data: e.target.value }))}
+            />
+            <TextField
+              color='green'
+              focused
+              size="small"
+              sx={{ minWidth: isMobile ? '100%' : '32%' }}
+              label="Telefone1"
+              name='telefone1'
+              value={novaPessoa.telefone1}
+              onChange={newPerson}
+            />
+            <TextField
+              color='green'
+              focused
+              size="small"
+              sx={{ minWidth: isMobile ? '100%' : '32%' }}
+              label="Telefone2"
+              name='telefone2'
+              value={novaPessoa.telefone2}
+              onChange={newPerson}
+            />
           </Stack>
           <Button variant="contained" color="other" sx={{ width: '25%' }} onClick={AddPessoa}>Adicionar Pessoa</Button>
         </ThemeProvider>
-        <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-          <TableContainer >  
-            {/* sx={{ width: '100%', display: 'table', tableLayout: 'fixed' }} */}
-            <Table
-              size="lg"
-              stripe="even"
-              variant="soft">
-              <TableHead>
-                <TableRow>
-                  {columns.map((column) => (
-                    <TableCell
-                      key={column.id}
-                      align={column.align}
-                      style={{ top: 57, minWidth: column.minWidth }}
-                    >
-                      {column.label}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows
-                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                  .map((row, index) => {
-                    return (
-                      <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                        {columns.map((column) => {
-                          const value = row[column.id];
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.format && typeof value === 'number'
-                                ? column.format(value)
-                                : value}
-                            </TableCell>
-                          );
-                        })}
-                      </TableRow>
-                    );
-                  })}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <TablePagination
-            rowsPerPageOptions={[5, 10]}
-            component="div"
-            count={rows.length}
-            rowsPerPage={rowsPerPage}
-            page={page}
-            onPageChange={handleChangePage}
-            onRowsPerPageChange={handleChangeRowsPerPage}
-          />
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
+            <TableContainer component={Box} sx={{ overflowX: 'auto' }}>
+              <Table
+                size="small" aria-label="a dense table"
+                stripe="even"
+                variant="soft">
+                <TableHead>
+                  <TableRow>
+                    {columns.map((column) => (
+                      <TableCell
+                        key={column.id}
+                        align={column.align}
+                        style={{ top: 57, minWidth: column.minWidth }}
+                        sx={{ minWidth: isMobile ? '80px' : '150px' }}
+                      >
+                        {column.label}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {rows
+                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .map((row, index) => {
+                      return (
+                        <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                          {columns.map((column) => {
+                            const value = row[column.id];
+                            return (
+                              <TableCell key={column.id} align={column.align}>
+                                {column.format && typeof value === 'number'
+                                  ? column.format(value)
+                                  : value}
+                              </TableCell>
+                            );
+                          })}
+                        </TableRow>
+                      );
+                    })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+            <TablePagination
+              rowsPerPageOptions={[5, 10]}
+              component="div"
+              count={rows.length}
+              rowsPerPage={rowsPerPage}
+              page={page}
+              onPageChange={handleChangePage}
+              onRowsPerPageChange={handleChangeRowsPerPage}
+            />
+          </Grid>
         </Grid>
       </Box>
     );
@@ -360,6 +359,14 @@ function TablePessoa() {
       },
     },
   });
+
+  function formatDate(dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${day}-${month}-${year}`;
+  }
 
   return (
     <div>
@@ -448,23 +455,18 @@ function TablePessoa() {
                   focused
                   size="small"
                   sx={{ width: '45%' }}
-                  type='date'
+                  type='data'
                   label="Data"
-                  name='date'
-                  value={pessoaSelecionada.date}
-                  onChange={(e) =>
-                    setPessoaSelecionada((prevPessoa) => ({
-                      ...prevPessoa,
-                      date: e.target.value
-                    }))
-                  }
+                  name='data'
+                  value={formatDate(pessoaSelecionada.data)}
+                  onChange={handleChange}
                 />
                 <TextField
                   color='green'
                   focused
                   size="small"
                   sx={{ width: '45%' }}
-                  label="Telefone"
+                  label="Telefone1"
                   name='telefone1'
                   value={pessoaSelecionada.telefone1}
                   onChange={handleChange}

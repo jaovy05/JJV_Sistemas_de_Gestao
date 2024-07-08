@@ -4,7 +4,6 @@ import './index.css';
 import App from './App';
 import { BrowserRouter } from 'react-router-dom';
 import axios from 'axios';
-
 // Configura o Axios para enviar o token JWT em cada requisição
 axios.interceptors.request.use(
   config => {

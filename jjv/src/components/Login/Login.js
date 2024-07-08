@@ -13,8 +13,9 @@ function Login() {
 
   const entrar = async () => {
     try {
-      const response = await axios.post('http://localhost:5000/login', { email, password });
+      const response = await axios.post('http://localhost:5000/login', { email, password});
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('cod', response.data.cod); 
       navigate('/home');
     } catch (error) {
       console.error('Login failed:', error);
@@ -46,7 +47,7 @@ function Login() {
             color='green'
             focused
             size='small'
-            label="Nome"
+            label="Email"
             name='email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
