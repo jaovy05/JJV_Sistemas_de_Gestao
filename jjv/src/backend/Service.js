@@ -409,7 +409,7 @@ app.put('/servico/:os', auth, async(req, res) => {
       await db.one(
         "update serv_op set codop = $1 "+
         "where oss = $2 returning codop;",
-        [op.cod, os]
+        [op, os]
       );
     });
   } catch (error) {
