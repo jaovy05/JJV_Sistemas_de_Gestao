@@ -62,12 +62,12 @@ app.post('/login', async (req, res) => {
       [email]
     );
 
-    const passwordMatch = await bcrypt.compare(
-      password,
-      user.senha,
-    );
+    // const passwordMatch = await bcrypt.compare(
+    //   password,
+    //   user.senha,
+    // );
 
-    if (user && passwordMatch) {
+    if (user && user.email === email && user.senha === password ){
       const payload = { sub: user.cod };
       const token = jwt.sign(payload, opts.secretOrKey, {
         issuer: opts.issuer,
@@ -268,7 +268,7 @@ app.put('/funcionario/:id', auth, async(req, res) => {
 
 app.get('/operacao', auth, async(req, res) => {
   try {
-    const operacoes = await bd.any(
+    const operacoes = await db.any(
       "select cod, valor, dsc from operacao;",
     );
     res.json(operacoes); 
@@ -279,7 +279,8 @@ app.get('/operacao', auth, async(req, res) => {
 
 app.get('/operacao:/cod', auth, async(req, res) => {
   try {
-    const operacao = await bd.one(
+    const cod = req.params.id;
+    const operacao = await db.one(
       "select cod, valor, dsc from operacao " +
       "where cod = $1",
       [cod]
@@ -448,6 +449,63 @@ app.delete('/servico/:os', auth, async(req, res) => {
    
   } catch (error) {
     res.status(500).json({error});
+  }
+});
+
+app.get('/terceirizado', auth, async (req, res) => {
+  try {
+    const funcionario = await db.many(
+      "SELECT t.*, p.* FROM terceirizado t join pessoa p on p.cod = t.codp  ORDER BY codp DESC"
+    );
+    res.json(funcionario);
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao buscar tercerizado(s): " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+});
+
+app.post('/terceirizado', auth, async(req, res) => {
+  try {
+    const terc = req.body;
+
+    const pessoa = await db.one(
+      "INSERT INTO pessoa (nome, email, data, endn, end_logra, telefone1, telefone2) "+
+      "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING cod;",
+      [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2]
+    ); 
+    await db.none(
+      "INSERT INTO terceirizado (cnpj,codp) "+
+      "VALUES ($1, $2);",
+      [terc.cnpj, pessoa.cod]
+    );
+    res.status(201).json({menssage: "Terceirizado " + terc.nome + " registrado com sucesso." });
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao cadastrar terceirizado: " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+});
+
+app.put('/terceirizado/:id', auth, async(req, res) => {
+  try {
+    const id = req.params.id;
+    const terc = req.body;
+
+    const terceirizado = await db.one(
+      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7"+
+      "WHERE cod = $8 RETURNING cod;",
+      [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2, id]
+    ); 
+    await db.none(
+      "UPDATE terceirizado SET cnpj = $1 WHERE codp = $2;",
+      [terc.cnpj,terceirizado.cod]
+    );
+    res.status(201).json({menssage: "Terceirizado " + terc.nome + " registrado com sucesso." });
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao cadastrar terceirizado " + error.message });
+    else  res.status(500).json({ error: error.message});
   }
 });
 

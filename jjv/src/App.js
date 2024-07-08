@@ -27,6 +27,7 @@ import { Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CadastroFuncionario from './components/Funcionario/CadastroFuncionario';
+import CadTerc from './components/Terceirizado/CadTerc';
 import Servico from './components/Servico/Servico';
 import Operacao from './components/Operacao/Operacao'
 const drawerWidth = 240;
@@ -206,7 +207,7 @@ export default function App() {
                   </Button>
                   <Collapse in={openCad} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
-                      <ListItemButton sx={{ pl: 4 }}>
+                      <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1">Cadastrar Tecido</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/operacao">Cadastrar Operacao</Link></Button>
                       </ListItemButton>
@@ -219,6 +220,7 @@ export default function App() {
                       <ListItemButton sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/cadastrar/pessoas">Cadastrar Pessoa</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/funcionario">Cadastrar Funcionário</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/terceirizado">Cadastrar Terceirizado</Link></Button>
                       </ListItemButton>
                     </List>
                   </Collapse>
@@ -234,6 +236,7 @@ export default function App() {
                 <Route path='/home' element={<Home />} />
                 <Route path='/cadastrar/pessoas' element={<CadastroPessoa />} />
                 <Route path='/funcionario' element={<CadastroFuncionario />} />
+                <Route path='/terceirizado' element={<CadTerc />} />
                 <Route path='/servico' element={<Servico />} />
                 <Route path='/operacao' element={<Operacao />} />
               </Routes>

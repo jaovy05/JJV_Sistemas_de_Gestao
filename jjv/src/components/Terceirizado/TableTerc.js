@@ -1,49 +1,51 @@
 import React from "react";
 import axios from "axios";
 import Icon from "@mdi/react";
-import { Box, Button, createTheme, FormControl, Grid, IconButton, InputLabel, MenuItem, Select, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, ThemeProvider, Tooltip, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, createTheme,Grid, IconButton,Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, ThemeProvider, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import { mdiSquareEditOutline } from '@mdi/js';
 import { Sheet } from "@mui/joy";
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
 
 
-function TableFuncionario() {
-  const [funcionarios, setFuncionarios] = React.useState([]);
-  const [funcionarioSelecionado, setFuncionarioSelecionado] = React.useState();
+
+function TableTerc() {
+  const [terceirizados, setTerceirizados] = React.useState([]);
+  const [terceirizadoSelecionado, setTerceirzadoSelecionado] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+
   React.useEffect(() => {
-    async function fetchFuncionarios() {
+    async function fetchTerceirizado() {
       try {
-        const response = await axios.get("http://localhost:5000/funcionario");
-        setFuncionarios(response.data);
+        const response = await axios.get("http://localhost:5000/terceirizado");
+        setTerceirizados(response.data);
       } catch (error) {
         console.error(error);
       }
     }
-    fetchFuncionarios();
+    fetchTerceirizado();
   }, []);
+
 
   const isMobile = useMediaQuery('(max-width:600px)');
 
-  const OpenModal = (funcionario) => {
-    setFuncionarioSelecionado(funcionario);
+  const OpenModal = (terceirizado) => {
+    setTerceirzadoSelecionado(terceirizado);
     setOpen(true);
   };
 
-  const alterarFuncionario = (e) => {
+  const alterarTerceirizado = (e) => {
     const { name, value } = e.target;
-    setFuncionarioSelecionado({ ...funcionarioSelecionado, [name]: value });
+    setTerceirzadoSelecionado({ ...terceirizadoSelecionado, [name]: value });
   };
-
 
   const editFuncionario = async () => {
     try {
-      const response = await axios.put(`http://localhost:5000/funcionario/${funcionarioSelecionado.codp}`,
-        funcionarioSelecionado,
+      const response = await axios.put(`http://localhost:5000/terceirizado/${terceirizadoSelecionado.codp}`,
+        terceirizadoSelecionado,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -52,45 +54,44 @@ function TableFuncionario() {
         });
 
       if (response.status === 201) {
-        setFuncionarios(funcionarios.map(funcionario => funcionario.codp === funcionarioSelecionado.codp ? funcionarioSelecionado : funcionario));
+        setTerceirizados(terceirizados.map(terceirizado => terceirizado.codp === terceirizadoSelecionado.codp ? terceirizadoSelecionado : terceirizado));
         setOpen(false);
       } else {
-        console.error('Erro ao editar ionário');
+        console.error('Erro ao editar terceirizado:');
       }
     } catch (error) {
-      console.error('Erro ao editar funcionário:', error);
+      console.error('Erro ao editar terceirizado:', error);
     }
   };
 
-  const AdicionarFuncionario = ({ addNewFunc }) => {
-    const [novoFuncionario, setNovoFuncionario] = React.useState({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cpf: '', senha: '', pis: '', adm: 0 });
+  const AdicionarTerceirizado = ({ addNewFunc }) => {
+    const [novoTerceirizado, setNovoTerceirizado] = React.useState({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cnpj: '' });
 
-    const newFuncionario = (e) => {
+    const newTerceirizado = (e) => {
       const { name, value } = e.target;
-      setNovoFuncionario({ ...novoFuncionario, [name]: value });
+      setNovoTerceirizado({ ...novoTerceirizado, [name]: value });
     };
 
-    const submitFuncionario = async (e) => {
+    const submitTerceirizado = async (e) => {
       e.preventDefault();
       try {
-        const response = await axios.post('http://localhost:5000/funcionario', novoFuncionario, {
+        const response = await axios.post('http://localhost:5000/terceirizado', novoTerceirizado, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`
           },
         });
         if (response.status === 201) {
-          const newFuncionario = response.data;
-          setFuncionarios([...funcionarios, newFuncionario]);
-          setNovoFuncionario({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cpf: '', senha: '', pis: '', adm: 0 });
+          const newTerceirizado = response.data;
+          setTerceirizados([...terceirizados, newTerceirizado]);
+          setNovoTerceirizado({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cnpj: '' });
         } else {
-          console.error('Erro ao cadastrar funcionário');
+          console.error('Erro ao cadastrar terceirizado');
         }
       } catch (error) {
-        console.error('Erro ao cadastrar funcionário:', error);
+        console.error('Erro ao cadastrar terceirizado:', error);
       }
     };
-
 
 
     const columns = [
@@ -102,10 +103,7 @@ function TableFuncionario() {
       { id: 'endn', label: 'Número', minWidth: isMobile ? '100%' : 20 },
       { id: 'telefone1', label: 'Telefone1', minWidth: isMobile ? '100%' : 120 },
       { id: 'telefone2', label: 'Telefone2', minWidth: isMobile ? '100%' : 120 },
-      { id: 'cpf', label: 'CPF', minWidth: isMobile ? '100%' : 120 },
-      // { id: 'senha', label: 'Senha', width: 10 },
-      { id: 'pis', label: 'Pis', minWidth: isMobile ? '100%' : 120 },
-      { id: 'adm', label: 'ADM', minWidth: isMobile ? '100%' : 80 },
+      { id: 'cnpj', label: 'CNPJ', minWidth: isMobile ? '100%' : 120 },
       { id: 'edit', label: 'Editar', minWidth: isMobile ? '100%' : 20 }
     ];
 
@@ -117,19 +115,10 @@ function TableFuncionario() {
       return `${day}-${month}-${year}`;
     }
 
-    function formatAdm(adm) {
-      if (adm === 1) {
-        return 'Administrador';
-      } else {
-        return 'Normal';
-      }
-    }
-
-    const rows = funcionarios.map(funcionario => ({
-      ...funcionario,
-      data: formatDate(funcionario.data),
-      adm: formatAdm(funcionario.adm),
-      edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(funcionario)}>
+    const rows = terceirizados.map(terceirizado => ({
+      ...terceirizado,
+      data: formatDate(terceirizado.data),
+      edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(terceirizado)}>
         <Icon path={mdiSquareEditOutline} size={1} />
       </IconButton></Tooltip>,
     }));
@@ -144,9 +133,7 @@ function TableFuncionario() {
       setRowsPerPage(event.target.value);
       setPage(0);
     }
-    //
 
-    //criar as cores estilizadas
     const theme = createTheme({
       palette: {
         green: {
@@ -178,8 +165,8 @@ function TableFuncionario() {
               sx={{ minWidth: isMobile ? '100%' : '49%' }}
               label="Nome"
               name='nome'
-              value={novoFuncionario.nome}
-              onChange={newFuncionario}
+              value={novoTerceirizado.nome}
+              onChange={newTerceirizado}
             />
             <TextField
               color='green'
@@ -188,8 +175,8 @@ function TableFuncionario() {
               sx={{ minWidth: isMobile ? '100%' : '49%' }}
               label="Email"
               name='email'
-              value={novoFuncionario.email}
-              onChange={newFuncionario}
+              value={novoTerceirizado.email}
+              onChange={newTerceirizado}
             />
           </Stack>
           <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
@@ -201,8 +188,8 @@ function TableFuncionario() {
               sx={{ minWidth: isMobile ? '100%' : '64%' }}
               label="Endereço"
               name='end_logra'
-              value={novoFuncionario.end_logra}
-              onChange={newFuncionario}
+              value={novoTerceirizado.end_logra}
+              onChange={newTerceirizado}
             />
             <TextField
               color='green'
@@ -211,8 +198,8 @@ function TableFuncionario() {
               sx={{ minWidth: isMobile ? '100%' : '34%' }}
               label="Número"
               name='endn'
-              value={novoFuncionario.endn}
-              onChange={newFuncionario}
+              value={novoTerceirizado.endn}
+              onChange={newTerceirizado}
             />
           </Stack>
           <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
@@ -225,8 +212,8 @@ function TableFuncionario() {
               type='date'
               label="Data"
               name='data'
-              value={novoFuncionario.data}
-              onChange={(e) => setNovoFuncionario((prevPessoa) => ({ ...prevPessoa, data: e.target.value }))}
+              value={novoTerceirizado.data}
+              onChange={(e) => setNovoTerceirizado((prevPessoa) => ({ ...prevPessoa, data: e.target.value }))}
             />
             <TextField
               color='green'
@@ -235,8 +222,8 @@ function TableFuncionario() {
               sx={{ minWidth: isMobile ? '100%' : '32%' }}
               label="Telefone1"
               name='telefone1'
-              value={novoFuncionario.telefone1}
-              onChange={newFuncionario}
+              value={novoTerceirizado.telefone1}
+              onChange={newTerceirizado}
             />
             <TextField
               color='green'
@@ -245,8 +232,8 @@ function TableFuncionario() {
               sx={{ minWidth: isMobile ? '100%' : '32%' }}
               label="Telefone2"
               name='telefone2'
-              value={novoFuncionario.telefone2}
-              onChange={newFuncionario}
+              value={novoTerceirizado.telefone2}
+              onChange={newTerceirizado}
             />
           </Stack>
           <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap" direction={{ sm: 'column', md: 'row' }} sx={{ minWidth: 1 }}>
@@ -255,53 +242,18 @@ function TableFuncionario() {
               focused
               size="small"
               sx={{ minWidth: isMobile ? '100%' : '33%' }}
-              label="CPF"
-              name='cpf'
-              value={novoFuncionario.cpf}
-              onChange={newFuncionario}
+              label="CNPJ"
+              name='cnpj'
+              value={novoTerceirizado.cnpj}
+              onChange={newTerceirizado}
             />
-            <TextField
-              color='green'
-              focused
-              size="small"
-              sx={{ minWidth: isMobile ? '100%' : '32%' }}
-              label="Senha"
-              name='senha'
-              value={novoFuncionario.senha}
-              onChange={newFuncionario}
-            />
-            <TextField
-              color='green'
-              focused
-              size="small"
-              sx={{ minWidth: isMobile ? '100%' : '32%' }}
-              label="Pis"
-              name='pis'
-              value={novoFuncionario.pis}
-              onChange={newFuncionario}
-            />
-          </Stack>
-          <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap" direction={{ sm: 'column', md: 'row' }} sx={{ minWidth: 1 }}>
-
-            <FormControl sx={{ minWidth: isMobile ? '100%' : '32%' }} color="green" focused size="small">
-              <InputLabel>Acesso</InputLabel>
-              <Select
-                label="Acesso"
-                name="adm"
-                value={novoFuncionario.adm}
-                onChange={newFuncionario}
-              >
-                <MenuItem value={1}>Administrador</MenuItem>
-                <MenuItem value={0}>Normal</MenuItem>
-              </Select>
-            </FormControl>
-            <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitFuncionario}>Adicionar Funcionário</Button>
-          </Stack>
+          <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitTerceirizado}>Adicionar Terceirizado</Button>
+          </Stack> 
         </ThemeProvider>
         <Grid container spacing={{ xs: 2 }}>
           <Grid item xs={12}>
             {isMobile ? (
-              funcionarios.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((funcionario) => (
+              terceirizados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((funcionario) => (
                 <Box key={funcionario.codp} sx={{ mb: 2, p: 2, border: "1px solid #ddd", borderRadius: 2, boxShadow: 1, width: "100%" }}>
                   {columns.map((column) => (
                     <Box key={column.id} sx={{ display: "flex", justifyContent: "space-between", py: 1 }}>
@@ -309,7 +261,7 @@ function TableFuncionario() {
                       <Typography variant="body2">
                         {column.id === "edit" ? (
                           <Tooltip title="Editar">
-                            <IconButton sx={{ color: 'warning.main' }} onClick={() => OpenModal(funcionario)}>
+                            <IconButton sx={{ color: 'warning.main' }} onClick={() => OpenModal(terceirizados)}>
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </IconButton>
                           </Tooltip>
@@ -377,7 +329,6 @@ function TableFuncionario() {
         </Grid>
       </Box>
     );
-
   };
 
   const theme = createTheme({
@@ -401,7 +352,7 @@ function TableFuncionario() {
 
   return (
     <div>
-      <AdicionarFuncionario addNewFunc={(novoFuncionario) => setFuncionarios([...funcionarios, novoFuncionario])} />
+      <AdicionarTerceirizado addNewTerc={(novoTerceirizado) => setTerceirizados([...terceirizados, novoTerceirizado])} />
       <Modal
         open={open}
         onClose={() => setOpen(false)}
@@ -425,7 +376,7 @@ function TableFuncionario() {
           >
             Editar Funcionário
           </Typography>
-          {funcionarioSelecionado ? (
+          {terceirizadoSelecionado ? (
             <Box sx={{
               width: '100%',
               display: 'flex',
@@ -443,8 +394,8 @@ function TableFuncionario() {
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="Nome"
                   name='nome'
-                  value={funcionarioSelecionado.nome}
-                  onChange={alterarFuncionario}
+                  value={terceirizadoSelecionado.nome}
+                  onChange={alterarTerceirizado}
                 />
                 <TextField
                   color='green'
@@ -453,8 +404,8 @@ function TableFuncionario() {
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="Email"
                   name='email'
-                  value={funcionarioSelecionado.email}
-                  onChange={alterarFuncionario}
+                  value={terceirizadoSelecionado.email}
+                  onChange={alterarTerceirizado}
                 />
                 <TextField
                   color='green'
@@ -463,8 +414,8 @@ function TableFuncionario() {
                   sx={{ width: isMobile ? '100%' : '65%' }}
                   label="Endereço"
                   name='end_logra'
-                  value={funcionarioSelecionado.end_logra}
-                  onChange={alterarFuncionario}
+                  value={terceirizadoSelecionado.end_logra}
+                  onChange={alterarTerceirizado}
                 />
                 <TextField
                   color='green'
@@ -473,8 +424,8 @@ function TableFuncionario() {
                   sx={{ width: isMobile ? '100%' : '30%' }}
                   label="Número"
                   name='endn'
-                  value={funcionarioSelecionado.endn}
-                  onChange={alterarFuncionario}
+                  value={terceirizadoSelecionado.endn}
+                  onChange={alterarTerceirizado}
                 />
                 <TextField
                   color='green'
@@ -484,8 +435,8 @@ function TableFuncionario() {
                   type='data'
                   label="Data"
                   name='data'
-                  value={formatDate(funcionarioSelecionado.data)}
-                  onChange={alterarFuncionario}
+                  value={formatDate(terceirizadoSelecionado.data)}
+                  onChange={alterarTerceirizado}
                 />
                 <TextField
                   color='green'
@@ -494,8 +445,8 @@ function TableFuncionario() {
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="Telefone1"
                   name='telefone1'
-                  value={funcionarioSelecionado.telefone1}
-                  onChange={alterarFuncionario}
+                  value={terceirizadoSelecionado.telefone1}
+                  onChange={alterarTerceirizado}
                 />
                 <TextField
                   color='green'
@@ -504,63 +455,30 @@ function TableFuncionario() {
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="Telefone2"
                   name="telefone2"
-                  value={funcionarioSelecionado?.telefone2 || ""}
-                  onChange={alterarFuncionario}
+                  value={terceirizadoSelecionado.telefone2}
+                  onChange={alterarTerceirizado}
                 />
                 <TextField
                   color='green'
                   focused
+                   size="small"
                   sx={{ width: isMobile ? '100%' : '45%' }}
-                  label="CPF"
-                  name="cpf"
-                  value={funcionarioSelecionado?.cpf || ""}
-                  onChange={alterarFuncionario}
+                  label="CNPJ"
+                  name="cnpj"
+                  value={terceirizadoSelecionado.cnpj}
+                  onChange={alterarTerceirizado}
                 />
-                <TextField
-                  color='green'
-                  focused
-                  size="small"
-                  sx={{ width: isMobile ? '100%' : '45%' }}
-                  label="Senha"
-                  name="senha"
-                  value={funcionarioSelecionado.senha}
-                  onChange={alterarFuncionario}
-                />
-                <TextField
-                  color='green'
-                  focused
-                  size="small"
-                  sx={{ width: isMobile ? '100%' : '45%' }}
-                  label="Pis"
-                  name="pis"
-                  value={funcionarioSelecionado?.pis || ""}
-                  onChange={alterarFuncionario}
-                />
-                <FormControl color='green'
-                  focused
-                  size="small"
-                  sx={{ width: isMobile ? '100%' : '45%' }}>
-                  <InputLabel>Acesso</InputLabel>
-                  <Select
-                    name="adm"
-                    label="Acesso"
-                    value={funcionarioSelecionado?.adm || 0}
-                    onChange={alterarFuncionario}
-                  >
-                    <MenuItem value={1}>Administrador</MenuItem>
-                    <MenuItem value={0}>Normal</MenuItem>
-                  </Select>
-                </FormControl>
-                <Button variant="outlined" color='warning' sx={{ color: 'warning.main',width: isMobile ? '100%' : '35%'  }} onClick={editFuncionario}>Editar Funcionário</Button>
+                <Button variant="outlined" color='warning' sx={{ color: 'warning.main',width: isMobile ? '100%' : '35%'  }} onClick={editFuncionario}>Editar Terceirizado</Button>
               </ThemeProvider>
             </Box>
           ) : (
-            <Typography variant="body1">Nenhum Funcionário selecionado</Typography>
+            <Typography variant="body1">Nenhum Tercerizado selecionado</Typography>
           )}
         </Sheet>
       </Modal>
     </div>
   );
+
 }
 
-export default TableFuncionario;
+export default TableTerc;
