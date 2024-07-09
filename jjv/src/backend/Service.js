@@ -480,7 +480,7 @@ app.put('/terceirizado/:id', auth, async(req, res) => {
     const terc = req.body;
 
     const terceirizado = await db.one(
-      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7"+
+      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7 "+
       "WHERE cod = $8 RETURNING cod;",
       [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2, id]
     ); 
