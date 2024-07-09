@@ -6,7 +6,6 @@ import { mdiSquareEditOutline } from '@mdi/js';
 import { Sheet } from "@mui/joy";
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
-import SimpleAlert from '../Alerts/SuccessAlert';
 
 function TableModelo() {
   const [modelos, setModelo] = React.useState([]);
@@ -84,7 +83,7 @@ function TableModelo() {
           const newModelo = response.data;
           setModelo([...modelos, newModelo]);
           setNovoModelo({cod: '', dsc: '', cnpjc: ''});
-          <SimpleAlert />
+          window.location.reload();
         } else {
           console.error('Erro ao cadastrar modelo');
         }

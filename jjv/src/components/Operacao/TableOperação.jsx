@@ -62,7 +62,7 @@ function TableOperacao() {
     }
   };
 
-  const AdicionarOperacao = ({ addNewFunc }) => {
+  const AdicionarOperacao = () => {
     const [novaOperacao, setNovaOperacao] = React.useState({ dsc: '',  valor: '' });
 
     const newOperacao = (e) => {
@@ -83,6 +83,7 @@ function TableOperacao() {
           const newOperacao = response.data;
           setOperacoes([...operacoes, newOperacao]);
           setNovaOperacao({ dsc: '',  valor: '' });
+          window.location.reload();
         } else {
           console.error('Erro ao cadastrar operação');
         }

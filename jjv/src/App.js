@@ -3,7 +3,7 @@ import { Route, Routes } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login/Login';
 import Home from './components/Home/Home';
-import CadastroPessoa from './components/CadastroPessoa/CadastroPessoa';
+// import CadastroPessoa from './components/CadastroPessoa/CadastroPessoa';
 import { Link } from "react-router-dom";
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -235,7 +235,6 @@ export default function App() {
                     {isAdm && <Collapse in={openRh} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItemButton sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cadastrar/pessoas">Cadastrar Pessoa</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/funcionario">Cadastrar Funcionário</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/terceirizado">Cadastrar Terceirizado</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cliente">Cadastrar Cliente</Link></Button>
@@ -253,7 +252,6 @@ export default function App() {
             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', my: 4 }}>
               <Routes>
                 <Route path='/home' element={<Home />} />
-                <Route path='/cadastrar/pessoas' element={<CadastroPessoa />} />
                 <Route path='/funcionario' element={<CadastroFuncionario />} />
                 <Route path='/terceirizado' element={<CadTerc />} />
                 <Route path='/cliente' element={<CadCliente />} />

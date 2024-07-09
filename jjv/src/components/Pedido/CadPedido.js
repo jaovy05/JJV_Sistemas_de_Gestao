@@ -10,7 +10,7 @@ const Pedido = () => (
             alignItems: 'center', 
             marginBottom: '1em' 
             }}>
-              Cadastro de Funcionário
+              Cadastro Pedido
       </Typography>
     <TablePedido />
     </div>

@@ -73,6 +73,7 @@ function TableCliente() {
     };
 
     const submitCliente = async (e) => {
+      e.preventDefault();
       try {
         const response = await axios.post('http://localhost:5000/cliente', novoCliente, {
           headers: {

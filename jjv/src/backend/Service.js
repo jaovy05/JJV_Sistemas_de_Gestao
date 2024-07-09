@@ -69,7 +69,7 @@ app.post('/login', async (req, res) => {
        user.senha,
      );
 
-    if (user && (user.email === email) && passwordMatch && (user.inativo != 1)){
+    if (user && (user.email === email) && passwordMatch && (user.inativo !== 1)){
       const payload = { sub: user.cod, adm: user.adm };
       const token = jwt.sign(payload, opts.secretOrKey,
          {expiresIn: "10h"}
@@ -611,6 +611,21 @@ app.put('/pedido/:id', auth, async (req, res) => {
   }
 });
 
+app.delete('/pedido/:id', auth, async (req, res) => {
+  try {
+    const id = req.params.id;
+    await db.one(
+      "delete from pedido where cod = $1",
+      [id]
+    );
+    res.json({ message: 'Pedido removida com sucesso' });
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao remover pedido. Não existe o cod informado"});
+    else  res.status(500).json({ error: error});
+  }
+}); 
+
 app.get('/grafico', auth, async (req, res) => {
   try {
     const ano = new Date().getFullYear() - 1;
@@ -773,11 +788,25 @@ app.post('/relatorio', async (req, res) => {
   }
 
   try {
-    const result = await pool.query(query, params);
-    res.json(result.rows);
+    // const result = await pool.query(query, params);
+    // res.json(result.rows);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
+  }
+});
+
+//Table Home
+app.get('/tablehome', auth, async (req, res) => {
+  try {
+    const home = await db.many(
+      "SELECT t.*, p.nome, ped.pedido, m.dsc FROM terceirizado t join pessoa p on p.cod = t.codp join cliente c on c.codp = p.cod join pedido ped on ped.cnpjc = c.cnpj join modelo m on m.cnpjc = c.cnpj ORDER BY codp ASC"
+    );
+    res.json(home);
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao buscar pedido(s): " + error.message });
+    else  res.status(500).json({ error: error.message});
   }
 });
 

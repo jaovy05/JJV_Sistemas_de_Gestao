@@ -2,17 +2,11 @@ import React from "react";
 import axios from "axios";
 import Icon from "@mdi/react";
 import { Box, Button, createTheme, Grid, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, ThemeProvider, Tooltip, Typography, useMediaQuery } from '@mui/material';
-import { mdiSquareEditOutline } from '@mdi/js';
+import { mdiSquareEditOutline, mdiDeleteForeverOutline } from '@mdi/js';
 import { Sheet } from "@mui/joy";
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
-import SimpleAlert from '../Alerts/SuccessAlert';
 
-<<<<<<< HEAD
-
-
-=======
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
 function TablePedido() {
   const [pedidos, setPedidos] = React.useState([]);
   const [pedidoSelecionado, setPedidoSelecionado] = React.useState(null);
@@ -20,10 +14,6 @@ function TablePedido() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-<<<<<<< HEAD
-
-=======
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
   React.useEffect(() => {
     async function fetchPedidos() {
       try {
@@ -93,7 +83,7 @@ function TablePedido() {
           const newPedido = response.data;
           setPedidos([...pedidos, newPedido]);
           setNovoPedido({ cod: '', pedido: '', op: '', comp: '', qtdp: '', qtdm: '', qtdg: '', qtdgg: '', qtdxgg: '', avm: '', obs: '', cnpjc: '', codf: '', codt: '' });
-          <SimpleAlert />
+          window.location.reload();
         } else {
           console.error('Erro ao cadastrar pedido');
         }
@@ -118,7 +108,8 @@ function TablePedido() {
       { id: 'cnpjc', label: 'CNPJ Cliente', minWidth: isMobile ? '100%' : 10 },
       { id: 'codf', label: 'Código Funcionário', minWidth: isMobile ? '100%' : 10 },
       { id: 'codt', label: 'Código Tecido', minWidth: isMobile ? '100%' : 10 },
-      { id: 'edit', label: 'Editar', minWidth: isMobile ? '100%' : 10 }
+      { id: 'edit', label: 'Editar', minWidth: isMobile ? '100%' : 10 },
+      { id: 'delete', label: 'Deletar', minWidth: isMobile ? '100%' : 10}
     ];
 
     const rows = pedidos.map(pedido => ({
@@ -126,7 +117,29 @@ function TablePedido() {
       edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(pedido)}>
         <Icon path={mdiSquareEditOutline} size={1} />
       </IconButton></Tooltip>,
+      delete: <Tooltip title="Excluir"><IconButton sx={{ color: 'error.main' }} size="large" onClick={() => DeletePedido(pedido.cod)}>
+        <Icon path={mdiDeleteForeverOutline} size={1} />
+      </IconButton></Tooltip>
     }));
+
+        //deletar pessoa
+        const DeletePedido = async (cod) => {
+          try {
+            const response = await axios.delete(`http://localhost:5000/pedido/${cod}`, {
+              headers: {
+                Authorization: `Bearer ${localStorage.getItem('token')}`
+              }
+            });
+            if (response.status === 400) {
+              window.location.reload();
+              // setPedidos(pedidos.filter(pedido => pedido.cod !== cod))
+            } else {
+              console.error('Erro ao deletar pedido', response.data);
+            }
+          } catch (error) {
+            console.error('Erro ao deletar pedido', error);
+          }
+        };
 
 
     //manipulação de paginação
@@ -336,6 +349,12 @@ function TablePedido() {
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </IconButton>
                           </Tooltip>
+                        ) : column.id === "edit" ? (
+                          <Tooltip title="Editar">
+                            <IconButton sx={{ color: 'warning.main' }} onClick={() => OpenModal(pedido)}>
+                              <Icon path={mdiSquareEditOutline} size={1} />
+                            </IconButton>
+                          </Tooltip>
                         ) : (
                           pedido[column.id]
                         )}
@@ -452,51 +471,51 @@ function TablePedido() {
               gap: 3,
             }} >
               <ThemeProvider theme={theme}>
-              <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
+                <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
                   direction={{ sm: 'column', md: 'row' }} sx={{ minWidth: 1 }}>
-                <TextField
-                  color='green'
-                  focused
-                  id='outlined-basic'
-                  size="small"
-                  sx={{ minWidth: isMobile ? '100%' : '10%' }}
-                  label="Código"
-                  name='cod'
-                  value={pedidoSelecionado.cod}
-                  onChange={alterarPedido}
-                />
-                <TextField
-                  color='green'
-                  focused
-                  id='outlined-basic'
-                  size="small"
-                  sx={{ minWidth: isMobile ? '100%' : '10%' }}
-                  label="Pedido"
-                  name='pedido'
-                  value={pedidoSelecionado.pedido}
-                  onChange={alterarPedido}
-                />
-                <TextField
-                  color='green'
-                  focused
-                  size="small"
-                  sx={{ minWidth: isMobile ? '100%' : '10%' }}
-                  label="OP"
-                  name='op'
-                  value={pedidoSelecionado.op}
-                  onChange={alterarPedido}
-                />
-                <TextField
-                  color='green'
-                  focused
-                  size="small"
-                  sx={{ minWidth: isMobile ? '100%' : '20%' }}
-                  label="Comprimento Plotter"
-                  name='comp'
-                  value={pedidoSelecionado.comp}
-                  onChange={alterarPedido}
-                />
-              </Stack>
+                  <TextField
+                    color='green'
+                    focused
+                    id='outlined-basic'
+                    size="small"
+                    sx={{ minWidth: isMobile ? '100%' : '10%' }}
+                    label="Código"
+                    name='cod'
+                    value={pedidoSelecionado.cod}
+                    onChange={alterarPedido}
+                  />
+                  <TextField
+                    color='green'
+                    focused
+                    id='outlined-basic'
+                    size="small"
+                    sx={{ minWidth: isMobile ? '100%' : '10%' }}
+                    label="Pedido"
+                    name='pedido'
+                    value={pedidoSelecionado.pedido}
+                    onChange={alterarPedido}
+                  />
+                  <TextField
+                    color='green'
+                    focused
+                    size="small"
+                    sx={{ minWidth: isMobile ? '100%' : '10%' }}
+                    label="OP"
+                    name='op'
+                    value={pedidoSelecionado.op}
+                    onChange={alterarPedido}
+                  />
+                  <TextField
+                    color='green'
+                    focused
+                    size="small"
+                    sx={{ minWidth: isMobile ? '100%' : '20%' }}
+                    label="Comprimento Plotter"
+                    name='comp'
+                    value={pedidoSelecionado.comp}
+                    onChange={alterarPedido}
+                  />
+                </Stack>
                 <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
                   direction={{ sm: 'column', md: 'row' }} sx={{ minWidth: 1 }}>
                   <TextField
