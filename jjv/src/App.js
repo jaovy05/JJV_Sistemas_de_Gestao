@@ -35,6 +35,7 @@ import Operacao from './components/Operacao/Operacao';
 import Relatorio from './components/Relatorio/relatorio'; 
 import CortePecas from './components/CortePecas/CadCortePecas';
 import Modelo from './components/Modelo/CadModelo';
+import Grafico from './components/Relatorio/Grafico';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -261,6 +262,7 @@ export default function App() {
                 <Route path='/relatorio' element={<Relatorio />} />
                 <Route path='/corte' element={<CortePecas />} />
                 <Route path='/modelo' element={<Modelo />} />
+                <Route path='/grafico' element={<Grafico />} />
               </Routes>
             </Box>
           </Main>

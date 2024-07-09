@@ -762,40 +762,36 @@ app.put('/modelo/:id', auth, async (req, res) => {
 app.post('/relatorio', async (req, res) => {
   const { terceirizado, cliente, dataInicio, dataFim } = req.body;
 
-  let query = `
-    SELECT t.cnpj as terceirizado, s.data_ter as dataRetirada, s.data_ent as dataEntrega, o.valor
-    FROM terceirizado t
-    JOIN serv_ter st ON t.cnpj = st.cnpjt
-    JOIN servico s ON st.oss = s.os
-    JOIN serv_op so ON s.os = so.oss
-    JOIN operacao o ON so.codop = o.cod
-    JOIN cliente c ON t.codp = c.codp
-    JOIN pessoa p ON c.codp = p.cod
-    WHERE 1=1
-  `;
-
-  const params = [];
+  let query = 
+    "SELECT t.cnpj as terceirizado, s.data_ter as dataRetirada, s.data_ent as dataEntrega, o.valor "+
+    "FROM terceirizado t "+
+    "JOIN serv_ter st ON t.cnpj = st.cnpjt "+
+    "JOIN servico s ON st.oss = s.os "+
+    "JOIN serv_op so ON s.os = so.oss "+
+    "JOIN operacao o ON so.codop = o.cod "+
+    "JOIN encaminha e on e.os_serv = s.os "+
+    "JOIN corte c on c.tam = e.tam, c.codp = e.tam_ct "+
+    "JOIN pedido p on p.op = c.codp "+
+    "JOIN cliente cli on cli.cnpj = p.cnpjc"
+    "WHERE 1=1 "
+  ;
 
   if (terceirizado) {
-    query += ` AND t.cnpj = $${params.length + 1}`;
-    params.push(terceirizado);
+    query += ` AND t.cnpj = ${terceirizado} `;
   }
   if (cliente) {
-    query += ` AND c.cnpj = $${params.length + 1}`;
-    params.push(cliente);
+    query += ` AND c.cnpj = ${cliente}`;
   }
   if (dataInicio) {
-    query += ` AND s.data_ter >= $${params.length + 1}`;
-    params.push(dataInicio);
+    query += ` AND s.data_ter >= ${dataInicio}`;
   }
   if (dataFim) {
-    query += ` AND s.data_ent <= $${params.length + 1}`;
-    params.push(dataFim);
+    query += ` AND s.data_ent <= ${dataFim}`;
   }
 
   try {
-    // const result = await pool.query(query, params);
-    // res.json(result.rows);
+    const result = await db.any(query);
+    res.json(result);
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
