@@ -641,7 +641,8 @@ app.get('/grafico', auth, async (req, res) => {
       "join operacao as o on so.codop = o.cod "+
       "join encaminha as e on s.os = e.os_serv "+
       "where s.data_ent >= $1 "+
-      "group by extract(month from s.data_ent);",
+      "group by mes, extract(year from s.data_ent) "+
+      "order by extract(year from s.data_ent), mes;",
       [`${ano}-${mes}-01`]
     );
     res.status(200).json(gastoMensal);
