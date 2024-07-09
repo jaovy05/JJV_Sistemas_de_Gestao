@@ -31,7 +31,14 @@ import CadTerc from './components/Terceirizado/CadTerc';
 import CadCliente from './components/Cliente/CadCliente';
 import CadastroPedido from './components/Pedido/CadPedido';
 import Servico from './components/Servico/Servico';
+<<<<<<< HEAD
 import Operacao from './components/Operacao/Operacao'
+=======
+import Operacao from './components/Operacao/Operacao';
+import Relatorio from './components/Relatorio/relatorio'; 
+import CortePecas from './components/CortePecas/CadCortePecas';
+import Modelo from './components/Modelo/CadModelo';
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -83,6 +90,7 @@ export default function App() {
   const [openCad, setOpenCadastro] = React.useState(false);
   const [openRh, setOpenRh] = React.useState(false);
   const [userName, setUserName] = useState('');
+<<<<<<< HEAD
   const [isAdm, setIsAdm] = React.useState(false);
   const navigate = useNavigate();
 
@@ -90,6 +98,10 @@ export default function App() {
 		setIsAdm(true);
 	};
 
+=======
+  const navigate = useNavigate();
+
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
   const handleDrawerOpen = () => {
     setOpen(true);
   };
@@ -105,7 +117,10 @@ export default function App() {
       );
       localStorage.removeItem('cod');
       localStorage.removeItem('token');
+<<<<<<< HEAD
       setIsAdm(false);
+=======
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
       navigate('/');
   
     } catch (error) {
@@ -116,6 +131,7 @@ export default function App() {
   useEffect(() => {
     const fetchUserName = async () => {
       try {
+<<<<<<< HEAD
         const token = localStorage.getItem('token');
         if (!token) {
           navigate('/');
@@ -133,6 +149,22 @@ export default function App() {
           setIsAdm(response.data.isAdm);
         }
         
+=======
+        const userCod = localStorage.getItem('cod');
+        const token = localStorage.getItem('token');
+        if (!userCod || !token) {
+          navigate('/');
+          return;
+        }
+        const response = await axios.get(`http://localhost:5000/cadastrar/pessoas/${userCod}`, {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        if (response.data) {
+          setUserName(response.data.nome);
+        }
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
       } catch (error) {
         console.error('Erro ao buscar nome do usuário', error);
       }
@@ -162,7 +194,11 @@ export default function App() {
   return (
 
     <Routes>
+<<<<<<< HEAD
       <Route path='/' element={<Login onLogin={handleLogin} />} />
+=======
+      <Route path='/' element={<Login />} />
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
       <Route path='/*' element={
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
@@ -220,14 +256,26 @@ export default function App() {
                     <List component="div" disablePadding>
                       <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/pedido">Cadastrar Pedido</Link></Button>
+<<<<<<< HEAD
                         {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>}
                         {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>}
+=======
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/corte">Cadastrar Corte de Peças</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/modelo">Cadastrar Modelo</Link></Button>
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
                       </ListItemButton>
                     </List>
                   </Collapse>
 
+<<<<<<< HEAD
                     {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={dropDownRh} className="link1">RH{openRh ? <ExpandLess /> : <ExpandMore />}</Button>} 
                     {isAdm && <Collapse in={openRh} timeout="auto" unmountOnExit>
+=======
+                  <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={dropDownRh} className="link1">RH{openRh ? <ExpandLess /> : <ExpandMore />}</Button>
+                  <Collapse in={openRh} timeout="auto" unmountOnExit>
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
                     <List component="div" disablePadding>
                       <ListItemButton sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cadastrar/pessoas">Cadastrar Pessoa</Link></Button>
@@ -236,7 +284,12 @@ export default function App() {
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cliente">Cadastrar Cliente</Link></Button>
                       </ListItemButton>
                     </List>
+<<<<<<< HEAD
                   </Collapse>}
+=======
+                  </Collapse>
+                  <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/relatorio">Relatório</Link></Button>
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
                   <Button onClick={sair} variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/">Sair</Link></Button>
                 </ThemeProvider>
               </ListItemButton>
@@ -254,6 +307,12 @@ export default function App() {
                 <Route path='/pedido' element={<CadastroPedido />} />
                 <Route path='/servico' element={<Servico />} />
                 <Route path='/operacao' element={<Operacao />} />
+<<<<<<< HEAD
+=======
+                <Route path='/relatorio' element={<Relatorio />} />
+                <Route path='/corte' element={<CortePecas />} />
+                <Route path='/modelo' element={<Modelo />} />
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
               </Routes>
             </Box>
           </Main>
