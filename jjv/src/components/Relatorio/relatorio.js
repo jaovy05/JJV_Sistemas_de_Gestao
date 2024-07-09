@@ -161,6 +161,8 @@ function TableRelatorio() {
         <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap" direction={{ sm: 'column', md: 'row' }} sx={{ minWidth: 1 }}>
           <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitRelatorio}>Filtrar</Button>
           <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitRelatorio}>Baixar pdf</Button>
+          <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitRelatorio}>Grafico</Button>
+
         </Stack>
       </ThemeProvider>
       <Box>

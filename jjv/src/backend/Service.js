@@ -790,8 +790,8 @@ app.post('/relatorio', async (req, res) => {
   }
 
   try {
-    const result = await db.any(query);
-    res.json(result);
+    /* const result = await db.any(query);
+    res.json(result); */
   } catch (error) {
     console.error(error);
     res.status(500).send('Server error');
