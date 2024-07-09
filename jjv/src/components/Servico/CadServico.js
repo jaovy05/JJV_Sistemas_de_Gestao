@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import TablePedido from './TablePedido';
+import TableServico from './TableServico';
 
-const Pedido = () => (
+const Servico = () => (
     <div>
       <Typography variant="h6" 
       sx={{ display: 'flex',
@@ -10,10 +10,10 @@ const Pedido = () => (
             alignItems: 'center', 
             marginBottom: '1em' 
             }}>
-              Cadastro de Pedido
+              Cadastro de Servico
       </Typography>
-    <TablePedido />
+    <TableServico />
     </div>
 );
 
-export default Pedido;
+export default Servico;

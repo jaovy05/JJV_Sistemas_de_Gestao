@@ -1,6 +1,6 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import TableRelatorio from './TableRelatorio';
+import TableRelatorio from './relatorio';
 
 const Relatorio = () => (
     <div>

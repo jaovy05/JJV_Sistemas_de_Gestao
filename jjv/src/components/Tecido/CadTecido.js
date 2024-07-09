@@ -1,8 +1,8 @@
 import React from 'react';
 import { Typography } from '@mui/material';
-import TablePedido from './TablePedido';
+import TableTecido from './TableTecido';
 
-const Pedido = () => (
+const Tecido = () => (
     <div>
       <Typography variant="h6" 
       sx={{ display: 'flex',
@@ -10,10 +10,10 @@ const Pedido = () => (
             alignItems: 'center', 
             marginBottom: '1em' 
             }}>
-              Cadastro de Pedido
+              Cadastro de Tecido
       </Typography>
-    <TablePedido />
+    <TableTecido />
     </div>
 );
 
-export default Pedido;
+export default Tecido;

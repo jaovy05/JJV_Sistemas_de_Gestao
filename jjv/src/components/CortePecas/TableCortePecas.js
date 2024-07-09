@@ -6,6 +6,7 @@ import { mdiSquareEditOutline } from '@mdi/js';
 import { Sheet } from "@mui/joy";
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
+import SimpleAlert from '../Alerts/SuccessAlert';
 
 function TableCortePecas() {
   const [cortes, setCortePecas] = React.useState([]);
@@ -52,6 +53,7 @@ function TableCortePecas() {
 
       if (response.status === 201) {
         setCortePecas(cortes.map(corte => corte.cod === corteSelecionado.codp ? corteSelecionado : corte));
+        window.location.reload();
         setOpen(false);
       } else {
         console.error('Erro ao editar corte:');
@@ -83,6 +85,7 @@ function TableCortePecas() {
           const newCorte = response.data;
           setCortePecas([...cortes, newCorte]);
           setNovoCorte({codp: '', tam: '', qtd: ''});
+          <SimpleAlert />
         } else {
           console.error('Erro ao cadastrar corte');
         }

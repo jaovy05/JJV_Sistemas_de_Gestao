@@ -55,6 +55,7 @@ function TableCliente() {
 
       if (response.status === 201) {
         setClientes(clientes.map(cliente => cliente.codp === clienteSelecionado.codp ? clienteSelecionado : cliente));
+        window.location.reload();
         setOpen(false);
       } else {
         console.error('Erro ao editar cliente:');

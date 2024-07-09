@@ -1,4 +1,4 @@
-const { USER, HOST, DATABASE, PASSWORD, PORT } = require("./Auth/Auth");
+const { USER, HOST, DATABASE, PASSWORD, PORT } = require("./Auth/Auth.js");
 const express = require('express');
 const app = express();
 const port = 5000;
@@ -14,6 +14,8 @@ const bcrypt = require("bcrypt");
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: '4provas_na_semana_é_pra_matar_qualquer_um_pqp',
+  issuer: 'accounts.examplesoft.com',
+  audience: 'yoursite.net'
 };
 
 const auth = passport.authenticate('jwt', { session: false });
@@ -21,14 +23,10 @@ const auth = passport.authenticate('jwt', { session: false });
 passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
   try {
     const user = await db.one(
-      "SELECT p.cod, p.email, p.inativo, f.senha, p.nome FROM pessoa as p "+
-      "JOIN funcionario as f on f.codp = p.cod "+
-      "WHERE cod = $1", 
+      "SELECT * FROM pessoa WHERE cod = $1", 
       [jwt_payload.sub]);
 
-      if (user && user.inativo !== 1) {
-        
-        user.isAdm = jwt_payload.adm === 1;
+      if (user) {
         return done(null, user);
       } else {
         return done(null, false);
@@ -59,7 +57,7 @@ app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await db.one(
-      "SELECT f.senha, f.adm, p.cod, p.email, p.inativo, p.nome FROM pessoa as p " +
+      "SELECT f.senha, p.* FROM pessoa as p " +
       "join funcionario as f on p.cod = f.codp WHERE email = $1", 
       [email]
     );
@@ -69,12 +67,13 @@ app.post('/login', async (req, res) => {
        user.senha,
      );
 
-    if (user && (user.email === email) && passwordMatch && (user.inativo !== 1)){
-      const payload = { sub: user.cod, adm: user.adm };
-      const token = jwt.sign(payload, opts.secretOrKey,
-         {expiresIn: "10h"}
-        );
-      res.json({ message: 'Authenticated', token, cod: user.cod, isAdm: user.adm === 1});
+    if (user && user.email === email  && passwordMatch ){
+      const payload = { sub: user.cod };
+      const token = jwt.sign(payload, opts.secretOrKey, {
+        issuer: opts.issuer,
+        audience: opts.audience
+      });
+      res.json({ message: 'Authenticated', token, cod: user.cod});
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -91,11 +90,6 @@ app.post('/logout', (req, res) => {
     res.status(500).send('Erro interno durante o logout.');
   }
 });
-
-app.get('/check/user', auth, (req, res) => {
-  res.json({ isAdm: req.user.isAdm, userName: req.user.nome });
-});
-
 
 app.post('/adm', async(req, res) => {
   const saltRounds = 9;
@@ -123,6 +117,7 @@ app.post('/adm', async(req, res) => {
 });
 // Rotas protegidas
 
+/* CADASTRAR PESSOAS */
 
 app.get('/cadastrar/pessoas/:id', auth, async (req, res) => {
   try {
@@ -138,8 +133,6 @@ app.get('/cadastrar/pessoas/:id', auth, async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-
-
 
 app.get('/cadastrar/pessoas', auth, async (req, res) => {
   try {
@@ -207,7 +200,9 @@ app.delete('/cadastrar/pessoas/:id', auth, async (req, res) => {
       res.status(400).json({ error: "Erro ao remover funcionario. Não existe o cod informado"});
     else  res.status(500).json({ error: error});
   }
-}); 
+});
+
+/* FUNCIONÁRIO */
 
 app.get('/funcionario', auth, async (req, res) => {
   try {
@@ -272,6 +267,8 @@ app.put('/funcionario/:id', auth, async(req, res) => {
   }
 });
 
+/* OPERAÇÃO */
+
 app.get('/operacao', auth, async(req, res) => {
   try {
     const operacoes = await db.any(
@@ -326,6 +323,8 @@ app.delete('/operacao/:cod', auth, async(req, res) => {
     res.status(500).json({error});
   }
 });
+
+/* SERVICO */
 
 app.get('/servico/t', auth, async(req, res) => {
   try {
@@ -581,7 +580,6 @@ app.get('/pedido', auth, async (req, res) => {
 app.post('/pedido', auth, async(req, res) => {
   try {
     const pedido = req.body;
-
     const novoPedido = await db.one(
       "INSERT INTO pedido (cod, pedido, op, comp, qtdp, qtdm, qtdg, qtdgg, qtdxgg, avm,obs, cnpjc,codf,codt) "+
       "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING cod;",
@@ -616,20 +614,7 @@ app.put('/pedido/:id', auth, async (req, res) => {
   }
 });
 
-app.delete('/pedido/:id', auth, async (req, res) => {
-  try {
-    const id = req.params.id;
-    await db.one(
-      "delete from pedido where cod = $1",
-      [id]
-    );
-    res.json({ message: 'Pedido removida com sucesso' });
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao remover pedido. Não existe o cod informado"});
-    else  res.status(500).json({ error: error});
-  }
-}); 
+/* GASTOS */
 
 app.get('/grafico', auth, async (req, res) => {
   try {
@@ -641,8 +626,7 @@ app.get('/grafico', auth, async (req, res) => {
       "join operacao as o on so.codop = o.cod "+
       "join encaminha as e on s.os = e.os_serv "+
       "where s.data_ent >= $1 "+
-      "group by mes, extract(year from s.data_ent) "+
-      "order by extract(year from s.data_ent), mes;",
+      "group by extract(month from s.data_ent);",
       [`${ano}-${mes}-01`]
     );
     res.status(200).json(gastoMensal);
@@ -812,6 +796,7 @@ app.get('/tablehome', auth, async (req, res) => {
   }
 });
 
+/* PORT */
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
