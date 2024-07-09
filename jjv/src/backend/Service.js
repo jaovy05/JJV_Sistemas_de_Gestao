@@ -62,12 +62,12 @@ app.post('/login', async (req, res) => {
       [email]
     );
 
-    // const passwordMatch = await bcrypt.compare(
-    //   password,
-    //   user.senha,
-    // );
+     const passwordMatch = await bcrypt.compare(
+       password,
+       user.senha,
+     );
 
-    if (user && user.email === email && user.senha === password ){
+    if (user && user.email === email && passwordMatch ){
       const payload = { sub: user.cod };
       const token = jwt.sign(payload, opts.secretOrKey, {
         issuer: opts.issuer,
@@ -570,7 +570,6 @@ app.get('/pedido', auth, async (req, res) => {
 app.post('/pedido', auth, async(req, res) => {
   try {
     const pedido = req.body;
-
     const novoPedido = await db.one(
       "INSERT INTO pedido (cod, pedido, op, comp, qtdp, qtdm, qtdg, qtdgg, qtdxgg, avm,obs, cnpjc,codf,codt) "+
       "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING cod;",
@@ -610,16 +609,13 @@ app.get('/grafico', auth, async (req, res) => {
     const ano = new Date().getFullYear() - 1;
     const mes = new Date().getMonth() + 1;
     const gastoMensal = await db.any(
-          "select extract(month from s.data_ent) as mes, sum(o.valor * e.qtd_env) from servico s "+
+          "select extract(month from s.data_ter) as mes sum(o.valor) from servico s "+
           "join serv_op as so on so.oss = s.os "+
           "join operacao as o on so.codop = o.cod "+
-          "join encaminha as e on s.os = e.os_serv "+
           "where s.data_ent >= $1 "+
-          "group by extract(month from s.data_ent);",
-          [`${ano}-${mes}-01`]
+          "group by extract(month from data);",
+          []
         );
-           
-        
     res.status(200).json(gastoMensal);
   } catch (error) {
     if (error instanceof db.$config.pgp.errors.QueryResultError) {
