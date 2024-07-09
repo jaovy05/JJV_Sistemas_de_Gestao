@@ -83,7 +83,12 @@ export default function App() {
   const [openCad, setOpenCadastro] = React.useState(false);
   const [openRh, setOpenRh] = React.useState(false);
   const [userName, setUserName] = useState('');
+  const [isAdm, setIsAdm] = React.useState(false);
   const navigate = useNavigate();
+
+  const handleLogin = () => {
+		setIsAdm(true);
+	};
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -100,6 +105,7 @@ export default function App() {
       );
       localStorage.removeItem('cod');
       localStorage.removeItem('token');
+      setIsAdm(false);
       navigate('/');
   
     } catch (error) {
@@ -110,20 +116,23 @@ export default function App() {
   useEffect(() => {
     const fetchUserName = async () => {
       try {
-        const userCod = localStorage.getItem('cod');
         const token = localStorage.getItem('token');
-        if (!userCod || !token) {
+        if (!token) {
           navigate('/');
           return;
         }
-        const response = await axios.get(`http://localhost:5000/cadastrar/pessoas/${userCod}`, {
+
+        const response = await axios.get('http://localhost:5000/check/user', {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem('token')}`
+            Authorization: `Bearer ${token}`
           }
         });
+
         if (response.data) {
-          setUserName(response.data.nome);
+          setUserName(response.data.userName);
+          setIsAdm(response.data.isAdm);
         }
+        
       } catch (error) {
         console.error('Erro ao buscar nome do usuário', error);
       }
@@ -153,7 +162,7 @@ export default function App() {
   return (
 
     <Routes>
-      <Route path='/' element={<Login />} />
+      <Route path='/' element={<Login onLogin={handleLogin} />} />
       <Route path='/*' element={
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
@@ -211,14 +220,14 @@ export default function App() {
                     <List component="div" disablePadding>
                       <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/pedido">Cadastrar Pedido</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>
+                        {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>}
+                        {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>}
                       </ListItemButton>
                     </List>
                   </Collapse>
 
-                  <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={dropDownRh} className="link1">RH{openRh ? <ExpandLess /> : <ExpandMore />}</Button>
-                  <Collapse in={openRh} timeout="auto" unmountOnExit>
+                    {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={dropDownRh} className="link1">RH{openRh ? <ExpandLess /> : <ExpandMore />}</Button>} 
+                    {isAdm && <Collapse in={openRh} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItemButton sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cadastrar/pessoas">Cadastrar Pessoa</Link></Button>
@@ -227,7 +236,7 @@ export default function App() {
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cliente">Cadastrar Cliente</Link></Button>
                       </ListItemButton>
                     </List>
-                  </Collapse>
+                  </Collapse>}
                   <Button onClick={sair} variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/">Sair</Link></Button>
                 </ThemeProvider>
               </ListItemButton>

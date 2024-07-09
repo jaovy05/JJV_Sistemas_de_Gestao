@@ -6,7 +6,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-function Login() {
+function Login({onLogin }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
@@ -16,6 +16,7 @@ function Login() {
       const response = await axios.post('http://localhost:5000/login', { email, password});
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('cod', response.data.cod); 
+      if(response.data.isAdm) onLogin();
       navigate('/home');
     } catch (error) {
       console.error('Login failed:', error);
