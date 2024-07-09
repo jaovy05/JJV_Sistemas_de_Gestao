@@ -605,6 +605,31 @@ app.put('/pedido/:id', auth, async (req, res) => {
   }
 });
 
+app.get('/grafico', auth, async (req, res) => {
+  try {
+    const ano = new Date().getFullYear() - 1;
+    const mes = new Date().getMonth() + 1;
+    const gastoMensal = await db.any(
+          "select extract(month from s.data_ent) as mes, sum(o.valor * e.qtd_env) from servico s "+
+          "join serv_op as so on so.oss = s.os "+
+          "join operacao as o on so.codop = o.cod "+
+          "join encaminha as e on s.os = e.os_serv "+
+          "where s.data_ent >= $1 "+
+          "group by extract(month from s.data_ent);",
+          [`${ano}-${mes}-01`]
+        );
+           
+        
+    res.status(200).json(gastoMensal);
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) {
+      res.status(400).json({ error: "Erro ao buscar grafico " + error.message });
+    } else {
+      res.status(500).json({ error: "erro no servidor " + error.message });
+    }
+  }
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 });
