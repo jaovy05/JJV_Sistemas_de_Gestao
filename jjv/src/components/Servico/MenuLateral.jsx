@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+/* import React, {useState} from 'react';
 import Divider from '@mui/material/Divider';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import Collapse from '@mui/material/Collapse';
@@ -64,4 +64,4 @@ function MenuLateral ({theme}){
   )
 }
 
-export default MenuLateral;
+export default MenuLateral; */
