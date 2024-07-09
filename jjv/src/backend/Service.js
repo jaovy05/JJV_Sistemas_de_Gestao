@@ -509,6 +509,57 @@ app.put('/terceirizado/:id', auth, async(req, res) => {
   }
 });
 
+app.get('/pedido', auth, async (req, res) => {
+  try {
+    const pessoas = await db.many(
+      "SELECT * FROM pedido ORDER BY cod DESC"
+    );
+    res.json(pessoas);
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao buscar pedido(s): " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+});
+
+app.post('/pedido', auth, async(req, res) => {
+  try {
+    const pedido = req.body;
+
+    const novoPedido = await db.one(
+      "INSERT INTO pedido (cod, pedido, op, comp, qtdp, qtdm, qtdg, qtdgg, qtdxgg, avm,obs, cnpjc,codf,codt) "+
+      "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING cod;",
+      [pedido.cod, pedido.pedido, pedido.op, pedido.comp, pedido.qtdp, pedido.qtdm, pedido.qtdg, pedido.qtdgg, pedido.qtdxgg, pedido.avm, pedido.obs, pedido.cnpjc, pedido.codf, pedido.codt]
+    ); 
+    res.status(201).json(novoPedido);
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao cadastrar terceirizado: " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+});
+
+app.put('/pedido/:id', auth, async (req, res) => {
+  try {
+    const id = req.params.id;
+    const pedido = req.body;
+
+    const editPedido = await db.one(
+      "UPDATE pedido SET cod = $1, pedido = $2, op = $3, comp = $4, qtdp = $5, qtdm = $6, qtdg = $7, qtdgg = $8, qtdxgg = $9, avm = $10, obs = $11, cnpjc = $12, codf = $13, codt = $14 " +
+      "WHERE cod = $15 RETURNING *;",
+      [pedido.cod, pedido.pedido, pedido.op, pedido.comp, pedido.qtdp, pedido.qtdm, pedido.qtdg, pedido.qtdgg, pedido.qtdxgg, pedido.avm, pedido.obs, pedido.cnpjc, pedido.codf, pedido.codt, id]
+    );
+    
+    res.status(201).json(editPedido);
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) {
+      res.status(400).json({ error: "Erro ao cadastrar Pedido " + error.message });
+    } else {
+      res.status(500).json({ error: "Aquiiiiiiiii " + error.message });
+    }
+  }
+});
+
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
 });

@@ -1,11 +1,12 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import axios from "axios";
 import Icon from "@mdi/react";
-import { Box, Button, createTheme,Grid, IconButton,Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, ThemeProvider, Tooltip, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, createTheme, Grid, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, ThemeProvider, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import { mdiSquareEditOutline } from '@mdi/js';
 import { Sheet } from "@mui/joy";
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
+import Alert from '@mui/material/Alert';
 
 
 
@@ -15,6 +16,9 @@ function TableTerc() {
   const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [alertOpen, setAlertOpen] = useState(false);
+  const [alertMessage, setAlertMessage] = useState('');
+  const [alertSeverity, setAlertSeverity] = useState('success'); // 'success' or 'error'
 
 
   React.useEffect(() => {
@@ -28,6 +32,16 @@ function TableTerc() {
     }
     fetchTerceirizado();
   }, []);
+
+  useEffect(() => {
+    if (alertOpen) {
+      const timer = setTimeout(() => {
+        setAlertOpen(false);
+      }, 3000); // Fecha o alerta após 3 segundos
+
+      return () => clearTimeout(timer);
+    }
+  }, [alertOpen]);
 
 
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -85,10 +99,19 @@ function TableTerc() {
           const newTerceirizado = response.data;
           setTerceirizados([...terceirizados, newTerceirizado]);
           setNovoTerceirizado({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cnpj: '' });
+          setAlertMessage('Cadastro realizado com sucesso.');
+          setAlertSeverity('success');
+          setAlertOpen(true);
         } else {
+          setAlertMessage('Erro ao cadastrar terceirizado.');
+          setAlertSeverity('error');
+          setAlertOpen(true);
           console.error('Erro ao cadastrar terceirizado');
         }
       } catch (error) {
+        setAlertMessage('Erro ao cadastrar terceirizado.');
+        setAlertSeverity('error');
+        setAlertOpen(true);
         console.error('Erro ao cadastrar terceirizado:', error);
       }
     };
@@ -153,6 +176,7 @@ function TableTerc() {
         flexWrap: 'wrap',
         justifyContent: 'space-between',
         gap: 3,
+
       }}>
         <ThemeProvider theme={theme}>
           <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
@@ -247,8 +271,9 @@ function TableTerc() {
               value={novoTerceirizado.cnpj}
               onChange={newTerceirizado}
             />
-          <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitTerceirizado}>Adicionar Terceirizado</Button>
-          </Stack> 
+            {alertOpen && <Alert severity={alertSeverity}>{alertMessage} </Alert>}
+            <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitTerceirizado} >Adicionar Terceirizado</Button>
+          </Stack>
         </ThemeProvider>
         <Grid container spacing={{ xs: 2 }}>
           <Grid item xs={12}>
@@ -356,7 +381,7 @@ function TableTerc() {
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        sx={{ width: isMobile ? '100%' : '45%', maxHeight: '90%', margin: 'auto',maxWidth: '90%', overflowY: 'auto'}}
+        sx={{ width: isMobile ? '100%' : '45%', maxHeight: '90%', margin: 'auto', maxWidth: '90%', overflowY: 'auto' }}
       >
         <Sheet
           variant="outlined"
@@ -461,14 +486,14 @@ function TableTerc() {
                 <TextField
                   color='green'
                   focused
-                   size="small"
+                  size="small"
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="CNPJ"
                   name="cnpj"
                   value={terceirizadoSelecionado.cnpj}
                   onChange={alterarTerceirizado}
                 />
-                <Button variant="outlined" color='warning' sx={{ color: 'warning.main',width: isMobile ? '100%' : '35%'  }} onClick={editFuncionario}>Editar Terceirizado</Button>
+                <Button variant="outlined" color='warning' sx={{ color: 'warning.main', width: isMobile ? '100%' : '35%' }} onClick={editFuncionario}>Editar Terceirizado</Button>
               </ThemeProvider>
             </Box>
           ) : (

@@ -28,6 +28,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CadastroFuncionario from './components/Funcionario/CadastroFuncionario';
 import CadTerc from './components/Terceirizado/CadTerc';
+import CadastroPedido from './components/Pedido/CadPedido';
 import Servico from './components/Servico/Servico';
 import Operacao from './components/Operacao/Operacao'
 const drawerWidth = 240;
@@ -208,6 +209,7 @@ export default function App() {
                   <Collapse in={openCad} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/pedido">Cadastrar Pedido</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1">Cadastrar Tecido</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/operacao">Cadastrar Operacao</Link></Button>
                       </ListItemButton>
@@ -237,6 +239,7 @@ export default function App() {
                 <Route path='/cadastrar/pessoas' element={<CadastroPessoa />} />
                 <Route path='/funcionario' element={<CadastroFuncionario />} />
                 <Route path='/terceirizado' element={<CadTerc />} />
+                <Route path='/pedido' element={<CadastroPedido />} />
                 <Route path='/servico' element={<Servico />} />
                 <Route path='/operacao' element={<Operacao />} />
               </Routes>
