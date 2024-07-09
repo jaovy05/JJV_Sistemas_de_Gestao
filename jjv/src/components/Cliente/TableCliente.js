@@ -1,65 +1,51 @@
-import React, { useState, useEffect } from 'react';
+import React from "react";
 import axios from "axios";
 import Icon from "@mdi/react";
-import { Box, Button, createTheme, Grid, IconButton, Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, ThemeProvider, Tooltip, Typography, useMediaQuery } from '@mui/material';
+import { Box, Button, createTheme,Grid, IconButton,Stack, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, TextField, ThemeProvider, Tooltip, Typography, useMediaQuery } from '@mui/material';
 import { mdiSquareEditOutline } from '@mdi/js';
 import { Sheet } from "@mui/joy";
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
-import Alert from '@mui/material/Alert';
 
 
 
-function TableTerc() {
-  const [terceirizados, setTerceirizados] = React.useState([]);
-  const [terceirizadoSelecionado, setTerceirzadoSelecionado] = React.useState(null);
+function TableCliente() {
+  const [clientes, setClientes] = React.useState([]);
+  const [clienteSelecionado, setClienteSelecionado] = React.useState(null);
   const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-  const [alertOpen, setAlertOpen] = useState(false);
-  const [alertMessage, setAlertMessage] = useState('');
-  const [alertSeverity, setAlertSeverity] = useState('success'); // 'success' or 'error'
 
 
   React.useEffect(() => {
-    async function fetchTerceirizado() {
+    async function fetchClientes() {
       try {
-        const response = await axios.get("http://localhost:5000/terceirizado");
-        setTerceirizados(response.data);
+        const response = await axios.get("http://localhost:5000/cliente");
+        setClientes(response.data);
       } catch (error) {
         console.error(error);
       }
     }
-    fetchTerceirizado();
+    fetchClientes();
   }, []);
-
-  useEffect(() => {
-    if (alertOpen) {
-      const timer = setTimeout(() => {
-        setAlertOpen(false);
-      }, 3000); // Fecha o alerta após 3 segundos
-
-      return () => clearTimeout(timer);
-    }
-  }, [alertOpen]);
 
 
   const isMobile = useMediaQuery('(max-width:600px)');
 
-  const OpenModal = (terceirizado) => {
-    setTerceirzadoSelecionado(terceirizado);
+  const OpenModal = (cliente) => {
+    setClienteSelecionado(cliente);
     setOpen(true);
   };
 
   const alterarTerceirizado = (e) => {
     const { name, value } = e.target;
-    setTerceirzadoSelecionado({ ...terceirizadoSelecionado, [name]: value });
+    setClienteSelecionado({ ...clienteSelecionado, [name]: value });
   };
 
   const editFuncionario = async () => {
     try {
-      const response = await axios.put(`http://localhost:5000/terceirizado/${terceirizadoSelecionado.codp}`,
-        terceirizadoSelecionado,
+      const response = await axios.put(`http://localhost:5000/cliente/${clienteSelecionado.codp}`,
+        clienteSelecionado,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -68,51 +54,42 @@ function TableTerc() {
         });
 
       if (response.status === 201) {
-        setTerceirizados(terceirizados.map(terceirizado => terceirizado.codp === terceirizadoSelecionado.codp ? terceirizadoSelecionado : terceirizado));
+        setClientes(clientes.map(cliente => cliente.codp === clienteSelecionado.codp ? clienteSelecionado : cliente));
         setOpen(false);
       } else {
-        console.error('Erro ao editar terceirizado:');
+        console.error('Erro ao editar cliente:');
       }
     } catch (error) {
-      console.error('Erro ao editar terceirizado:', error);
+      console.error('Erro ao editar cliente:', error);
     }
   };
 
-  const AdicionarTerceirizado = () => {
-    const [novoTerceirizado, setNovoTerceirizado] = React.useState({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cnpj: '' });
+  const AdicionarCliente = () => {
+    const [novoCliente, setNovoCliente] = React.useState({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cnpj: '' });
 
-    const newTerceirizado = (e) => {
+    const newCliente = (e) => {
       const { name, value } = e.target;
-      setNovoTerceirizado({ ...novoTerceirizado, [name]: value });
+      setNovoCliente({ ...novoCliente, [name]: value });
     };
 
-    const submitTerceirizado = async (e) => {
+    const submitCliente = async (e) => {
       try {
-        const response = await axios.post('http://localhost:5000/terceirizado', novoTerceirizado, {
+        const response = await axios.post('http://localhost:5000/cliente', novoCliente, {
           headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${localStorage.getItem('token')}`
           },
         });
         if (response.status === 201) {
-          const newTerceirizado = response.data;
-          setTerceirizados([...terceirizados, newTerceirizado]);
-          setNovoTerceirizado({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cnpj: '' });
+          const newCliente = response.data;
+          setClientes([...clientes, newCliente]);
+          setNovoCliente({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cnpj: '' });
           window.location.reload();
-          setAlertMessage('Cadastro realizado com sucesso.');
-          setAlertSeverity('success');
-          setAlertOpen(true);
         } else {
-          setAlertMessage('Erro ao cadastrar terceirizado.');
-          setAlertSeverity('error');
-          setAlertOpen(true);
-          console.error('Erro ao cadastrar terceirizado');
+          console.error('Erro ao cadastrar cliente:');
         }
       } catch (error) {
-        setAlertMessage('Erro ao cadastrar terceirizado.');
-        setAlertSeverity('error');
-        setAlertOpen(true);
-        console.error('Erro ao cadastrar terceirizado:', error);
+        console.error('Erro ao cadastrar cliente:', error);
       }
     };
 
@@ -138,10 +115,10 @@ function TableTerc() {
       return `${day}-${month}-${year}`;
     }
 
-    const rows = terceirizados.map(terceirizado => ({
-      ...terceirizado,
-      data: formatDate(terceirizado.data),
-      edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(terceirizado)}>
+    const rows = clientes.map(cliente => ({
+      ...cliente,
+      data: formatDate(cliente.data),
+      edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(cliente)}>
         <Icon path={mdiSquareEditOutline} size={1} />
       </IconButton></Tooltip>,
     }));
@@ -176,7 +153,6 @@ function TableTerc() {
         flexWrap: 'wrap',
         justifyContent: 'space-between',
         gap: 3,
-
       }}>
         <ThemeProvider theme={theme}>
           <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
@@ -189,8 +165,8 @@ function TableTerc() {
               sx={{ minWidth: isMobile ? '100%' : '49%' }}
               label="Nome"
               name='nome'
-              value={novoTerceirizado.nome}
-              onChange={newTerceirizado}
+              value={novoCliente.nome}
+              onChange={newCliente}
             />
             <TextField
               color='green'
@@ -199,8 +175,8 @@ function TableTerc() {
               sx={{ minWidth: isMobile ? '100%' : '49%' }}
               label="Email"
               name='email'
-              value={novoTerceirizado.email}
-              onChange={newTerceirizado}
+              value={novoCliente.email}
+              onChange={newCliente}
             />
           </Stack>
           <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
@@ -212,8 +188,8 @@ function TableTerc() {
               sx={{ minWidth: isMobile ? '100%' : '64%' }}
               label="Endereço"
               name='end_logra'
-              value={novoTerceirizado.end_logra}
-              onChange={newTerceirizado}
+              value={novoCliente.end_logra}
+              onChange={newCliente}
             />
             <TextField
               color='green'
@@ -222,8 +198,8 @@ function TableTerc() {
               sx={{ minWidth: isMobile ? '100%' : '34%' }}
               label="Número"
               name='endn'
-              value={novoTerceirizado.endn}
-              onChange={newTerceirizado}
+              value={novoCliente.endn}
+              onChange={newCliente}
             />
           </Stack>
           <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap"
@@ -236,8 +212,8 @@ function TableTerc() {
               type='date'
               label="Data"
               name='data'
-              value={novoTerceirizado.data}
-              onChange={(e) => setNovoTerceirizado((prevPessoa) => ({ ...prevPessoa, data: e.target.value }))}
+              value={novoCliente.data}
+              onChange={(e) => setNovoCliente((prevCliente) => ({ ...prevCliente, data: e.target.value }))}
             />
             <TextField
               color='green'
@@ -246,8 +222,8 @@ function TableTerc() {
               sx={{ minWidth: isMobile ? '100%' : '32%' }}
               label="Telefone1"
               name='telefone1'
-              value={novoTerceirizado.telefone1}
-              onChange={newTerceirizado}
+              value={novoCliente.telefone1}
+              onChange={newCliente}
             />
             <TextField
               color='green'
@@ -256,8 +232,8 @@ function TableTerc() {
               sx={{ minWidth: isMobile ? '100%' : '32%' }}
               label="Telefone2"
               name='telefone2'
-              value={novoTerceirizado.telefone2}
-              onChange={newTerceirizado}
+              value={novoCliente.telefone2}
+              onChange={newCliente}
             />
           </Stack>
           <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap" direction={{ sm: 'column', md: 'row' }} sx={{ minWidth: 1 }}>
@@ -268,30 +244,29 @@ function TableTerc() {
               sx={{ minWidth: isMobile ? '100%' : '33%' }}
               label="CNPJ"
               name='cnpj'
-              value={novoTerceirizado.cnpj}
-              onChange={newTerceirizado}
+              value={novoCliente.cnpj}
+              onChange={newCliente}
             />
-            {alertOpen && <Alert severity={alertSeverity}>{alertMessage} </Alert>}
-            <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitTerceirizado} >Adicionar Terceirizado</Button>
-          </Stack>
+          <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitCliente}>Adicionar Cliente</Button>
+          </Stack> 
         </ThemeProvider>
         <Grid container spacing={{ xs: 2 }}>
           <Grid item xs={12}>
             {isMobile ? (
-              terceirizados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((terceirizado) => (
-                <Box key={terceirizado.codp} sx={{ mb: 2, p: 2, border: "1px solid #ddd", borderRadius: 2, boxShadow: 1, width: "100%" }}>
+              clientes.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((cliente) => (
+                <Box key={cliente.codp} sx={{ mb: 2, p: 2, border: "1px solid #ddd", borderRadius: 2, boxShadow: 1, width: "100%" }}>
                   {columns.map((column) => (
                     <Box key={column.id} sx={{ display: "flex", justifyContent: "space-between", py: 1 }}>
                       <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>{column.label}:</Typography>
                       <Typography variant="body2">
                         {column.id === "edit" ? (
                           <Tooltip title="Editar">
-                            <IconButton sx={{ color: 'warning.main' }} onClick={() => OpenModal(terceirizado)}>
+                            <IconButton sx={{ color: 'warning.main' }} onClick={() => OpenModal(cliente)}>
                               <Icon path={mdiSquareEditOutline} size={1} />
                             </IconButton>
                           </Tooltip>
-                        ) : column.id === "data" ? (formatDate(terceirizado.data)) : (
-                          terceirizado[column.id]
+                        ) : column.id === "data" ? (formatDate(cliente.data)) : (
+                          cliente[column.id]
                         )}
                       </Typography>
                     </Box>
@@ -377,11 +352,11 @@ function TableTerc() {
 
   return (
     <div>
-      <AdicionarTerceirizado addNewTerc={(novoTerceirizado) => setTerceirizados([...terceirizados, novoTerceirizado])} />
+      <AdicionarCliente addNewTerc={(novoCliente) => setClientes([...clientes, novoCliente])} />
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        sx={{ width: isMobile ? '100%' : '45%', maxHeight: '90%', margin: 'auto', maxWidth: '90%', overflowY: 'auto' }}
+        sx={{ width: isMobile ? '100%' : '45%', maxHeight: '90%', margin: 'auto',maxWidth: '90%', overflowY: 'auto'}}
       >
         <Sheet
           variant="outlined"
@@ -401,7 +376,7 @@ function TableTerc() {
           >
             Editar Funcionário
           </Typography>
-          {terceirizadoSelecionado ? (
+          {clienteSelecionado ? (
             <Box sx={{
               width: '100%',
               display: 'flex',
@@ -419,7 +394,7 @@ function TableTerc() {
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="Nome"
                   name='nome'
-                  value={terceirizadoSelecionado.nome}
+                  value={clienteSelecionado.nome}
                   onChange={alterarTerceirizado}
                 />
                 <TextField
@@ -429,7 +404,7 @@ function TableTerc() {
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="Email"
                   name='email'
-                  value={terceirizadoSelecionado.email}
+                  value={clienteSelecionado.email}
                   onChange={alterarTerceirizado}
                 />
                 <TextField
@@ -439,7 +414,7 @@ function TableTerc() {
                   sx={{ width: isMobile ? '100%' : '65%' }}
                   label="Endereço"
                   name='end_logra'
-                  value={terceirizadoSelecionado.end_logra}
+                  value={clienteSelecionado.end_logra}
                   onChange={alterarTerceirizado}
                 />
                 <TextField
@@ -449,7 +424,7 @@ function TableTerc() {
                   sx={{ width: isMobile ? '100%' : '30%' }}
                   label="Número"
                   name='endn'
-                  value={terceirizadoSelecionado.endn}
+                  value={clienteSelecionado.endn}
                   onChange={alterarTerceirizado}
                 />
                 <TextField
@@ -460,7 +435,7 @@ function TableTerc() {
                   type='data'
                   label="Data"
                   name='data'
-                  value={formatDate(terceirizadoSelecionado.data)}
+                  value={formatDate(clienteSelecionado.data)}
                   onChange={alterarTerceirizado}
                 />
                 <TextField
@@ -470,7 +445,7 @@ function TableTerc() {
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="Telefone1"
                   name='telefone1'
-                  value={terceirizadoSelecionado.telefone1}
+                  value={clienteSelecionado.telefone1}
                   onChange={alterarTerceirizado}
                 />
                 <TextField
@@ -480,24 +455,24 @@ function TableTerc() {
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="Telefone2"
                   name="telefone2"
-                  value={terceirizadoSelecionado.telefone2}
+                  value={clienteSelecionado.telefone2}
                   onChange={alterarTerceirizado}
                 />
                 <TextField
                   color='green'
                   focused
-                  size="small"
+                   size="small"
                   sx={{ width: isMobile ? '100%' : '45%' }}
                   label="CNPJ"
                   name="cnpj"
-                  value={terceirizadoSelecionado.cnpj}
+                  value={clienteSelecionado.cnpj}
                   onChange={alterarTerceirizado}
                 />
-                <Button variant="outlined" color='warning' sx={{ color: 'warning.main', width: isMobile ? '100%' : '35%' }} onClick={editFuncionario}>Editar Terceirizado</Button>
+                <Button variant="outlined" color='warning' sx={{ color: 'warning.main',width: isMobile ? '100%' : '35%'  }} onClick={editFuncionario}>Editar Cliente</Button>
               </ThemeProvider>
             </Box>
           ) : (
-            <Typography variant="body1">Nenhum Tercerizado selecionado</Typography>
+            <Typography variant="body1">Nenhum Cliente selecionado</Typography>
           )}
         </Sheet>
       </Modal>
@@ -506,4 +481,4 @@ function TableTerc() {
 
 }
 
-export default TableTerc;
+export default TableCliente;

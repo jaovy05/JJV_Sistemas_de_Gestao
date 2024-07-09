@@ -28,6 +28,7 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import CadastroFuncionario from './components/Funcionario/CadastroFuncionario';
 import CadTerc from './components/Terceirizado/CadTerc';
+import CadCliente from './components/Cliente/CadCliente';
 import CadastroPedido from './components/Pedido/CadPedido';
 import Servico from './components/Servico/Servico';
 import Operacao from './components/Operacao/Operacao'
@@ -210,8 +211,8 @@ export default function App() {
                     <List component="div" disablePadding>
                       <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/pedido">Cadastrar Pedido</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1">Cadastrar Tecido</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/operacao">Cadastrar Operacao</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>
                       </ListItemButton>
                     </List>
                   </Collapse>
@@ -220,9 +221,10 @@ export default function App() {
                   <Collapse in={openRh} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItemButton sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/cadastrar/pessoas">Cadastrar Pessoa</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/funcionario">Cadastrar Funcionário</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/terceirizado">Cadastrar Terceirizado</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cadastrar/pessoas">Cadastrar Pessoa</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/funcionario">Cadastrar Funcionário</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/terceirizado">Cadastrar Terceirizado</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cliente">Cadastrar Cliente</Link></Button>
                       </ListItemButton>
                     </List>
                   </Collapse>
@@ -239,6 +241,7 @@ export default function App() {
                 <Route path='/cadastrar/pessoas' element={<CadastroPessoa />} />
                 <Route path='/funcionario' element={<CadastroFuncionario />} />
                 <Route path='/terceirizado' element={<CadTerc />} />
+                <Route path='/cliente' element={<CadCliente />} />
                 <Route path='/pedido' element={<CadastroPedido />} />
                 <Route path='/servico' element={<Servico />} />
                 <Route path='/operacao' element={<Operacao />} />

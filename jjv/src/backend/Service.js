@@ -273,21 +273,7 @@ app.get('/operacao', auth, async(req, res) => {
     );
     res.json(operacoes); 
   } catch (error) {
-    res.status(500).json({error});
-  }
-});
-
-app.get('/operacao:/cod', auth, async(req, res) => {
-  try {
-    const cod = req.params.id;
-    const operacao = await db.one(
-      "select cod, valor, dsc from operacao " +
-      "where cod = $1",
-      [cod]
-    );
-    res.json(operacao); 
-  } catch (error) {
-    res.status(500).json({error});
+    res.status(500).send(error);
   }
 });
 
@@ -307,7 +293,7 @@ app.post('/operacao', auth, async(req, res) => {
 
 app.put('/operacao/:cod', auth, async(req, res) => {
   try {
-    const cod = parseInt(req.params);
+    const cod = parseInt(req.params.cod);
     const operacao = req.body;
     const newOp = await db.one(
       "update operacao set valor = $1, dsc = $2 "+
@@ -322,8 +308,9 @@ app.put('/operacao/:cod', auth, async(req, res) => {
 
 app.delete('/operacao/:cod', auth, async(req, res) => {
   try {
-    const cod = parseInt(req.params);
-    const operacao = await db.none(
+    const cod = parseInt(req.params.cod);
+    console.log(cod);
+    const operacao = await db.one(
       "delete from operacao where cod = $1 " +
       "returning dsc;",
       [cod]
@@ -505,6 +492,64 @@ app.put('/terceirizado/:id', auth, async(req, res) => {
   } catch (error) {
     if (error instanceof db.$config.pgp.errors.QueryResultError) 
       res.status(400).json({ error: "Erro ao cadastrar terceirizado " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+});
+
+
+app.get('/cliente', auth, async (req, res) => {
+  try {
+    const funcionario = await db.many(
+      "SELECT c.*, p.* FROM cliente c join pessoa p on p.cod = c.codp  ORDER BY codp DESC"
+    );
+    res.json(funcionario);
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao buscar cliente(s): " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+});
+
+app.post('/cliente', auth, async(req, res) => {
+  try {
+    const cli = req.body;
+
+    const pessoa = await db.one(
+      "INSERT INTO pessoa (nome, email, data, endn, end_logra, telefone1, telefone2) "+
+      "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING cod;",
+      [cli.nome, cli.email, cli.data, cli.endn, cli.end_logra, cli.telefone1, cli.telefone2]
+    ); 
+    await db.none(
+      "INSERT INTO cliente (cnpj,codp) "+
+      "VALUES ($1, $2);",
+      [cli.cnpj, pessoa.cod]
+    );
+    res.status(201).json({menssage: "Terceirizado " + cli.nome + " registrado com sucesso." });
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao cadastrar cliente: " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+});
+
+app.put('/cliente/:id', auth, async(req, res) => {
+  try {
+    const id = req.params.id;
+    const cli = req.body;
+
+    const cliente = await db.one(
+      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7"+
+      "WHERE cod = $8 RETURNING cod;",
+      [cli.nome, cli.email, cli.data, cli.endn, cli.end_logra, cli.telefone1, cli.telefone2, id]
+    ); 
+    await db.none(
+      "UPDATE cliente SET cnpj = $1 WHERE codp = $2;",
+      [cli.cnpj,cliente.cod]
+    );
+    res.status(201).json({menssage: "Cliente " + cli.nome + " registrado com sucesso." });
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao cadastrar cliente " + error.message });
     else  res.status(500).json({ error: error.message});
   }
 });

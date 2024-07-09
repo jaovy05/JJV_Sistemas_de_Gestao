@@ -62,7 +62,7 @@ function TableFuncionario() {
     }
   };
 
-  const AdicionarFuncionario = ({ addNewFunc }) => {
+  const AdicionarFuncionario = () => {
     const [novoFuncionario, setNovoFuncionario] = React.useState({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cpf: '', senha: '', pis: '', adm: 0 });
 
     const newFuncionario = (e) => {
@@ -83,6 +83,7 @@ function TableFuncionario() {
           const newFuncionario = response.data;
           setFuncionarios([...funcionarios, newFuncionario]);
           setNovoFuncionario({ nome: '', email: '', data: '', endn: '', end_logra: '', telefone1: '', telefone2: '', cpf: '', senha: '', pis: '', adm: 0 });
+          window.location.reload();
         } else {
           console.error('Erro ao cadastrar funcionário');
         }
