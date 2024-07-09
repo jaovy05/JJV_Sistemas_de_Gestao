@@ -16,7 +16,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import TableServico from './TableServico';
-import MenuLateral from './MenuLateral';
+
 
 const drawerWidth = 240;
 
@@ -112,7 +112,7 @@ export default function Servico() {
         open={open}
       >
         
-        <MenuLateral theme= {theme} />
+
       </Drawer>
       <Main open={open}>
         <DrawerHeader />

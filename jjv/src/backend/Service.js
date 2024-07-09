@@ -273,21 +273,7 @@ app.get('/operacao', auth, async(req, res) => {
     );
     res.json(operacoes); 
   } catch (error) {
-    res.status(500).json({error});
-  }
-});
-
-app.get('/operacao:/cod', auth, async(req, res) => {
-  try {
-    const cod = req.params.id;
-    const operacao = await db.one(
-      "select cod, valor, dsc from operacao " +
-      "where cod = $1",
-      [cod]
-    );
-    res.json(operacao); 
-  } catch (error) {
-    res.status(500).json({error});
+    res.status(500).send(error);
   }
 });
 
@@ -307,7 +293,7 @@ app.post('/operacao', auth, async(req, res) => {
 
 app.put('/operacao/:cod', auth, async(req, res) => {
   try {
-    const cod = parseInt(req.params);
+    const cod = parseInt(req.params.cod);
     const operacao = req.body;
     const newOp = await db.one(
       "update operacao set valor = $1, dsc = $2 "+
@@ -322,8 +308,9 @@ app.put('/operacao/:cod', auth, async(req, res) => {
 
 app.delete('/operacao/:cod', auth, async(req, res) => {
   try {
-    const cod = parseInt(req.params);
-    const operacao = await db.none(
+    const cod = parseInt(req.params.cod);
+    console.log(cod);
+    const operacao = await db.one(
       "delete from operacao where cod = $1 " +
       "returning dsc;",
       [cod]
