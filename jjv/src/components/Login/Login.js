@@ -16,7 +16,10 @@ function Login({onLogin }) {
       const response = await axios.post('http://localhost:5000/login', { email, password});
       localStorage.setItem('token', response.data.token);
       localStorage.setItem('cod', response.data.cod); 
+<<<<<<< HEAD
       if(response.data.isAdm) onLogin();
+=======
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
       navigate('/home');
     } catch (error) {
       console.error('Login failed:', error);

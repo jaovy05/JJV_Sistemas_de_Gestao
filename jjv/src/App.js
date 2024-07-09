@@ -31,7 +31,10 @@ import CadTerc from './components/Terceirizado/CadTerc';
 import CadCliente from './components/Cliente/CadCliente';
 import CadastroPedido from './components/Pedido/CadPedido';
 import Servico from './components/Servico/Servico';
-import Operacao from './components/Operacao/Operacao'
+import Operacao from './components/Operacao/Operacao';
+import Relatorio from './components/Relatorio/relatorio'; 
+import CortePecas from './components/CortePecas/CadCortePecas';
+import Modelo from './components/Modelo/CadModelo';
 const drawerWidth = 240;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -222,6 +225,8 @@ export default function App() {
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/pedido">Cadastrar Pedido</Link></Button>
                         {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>}
                         {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>}
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/corte">Cadastrar Corte de Peças</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/modelo">Cadastrar Modelo</Link></Button>
                       </ListItemButton>
                     </List>
                   </Collapse>
@@ -237,6 +242,7 @@ export default function App() {
                       </ListItemButton>
                     </List>
                   </Collapse>}
+                  <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/relatorio">Relatório</Link></Button>
                   <Button onClick={sair} variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/">Sair</Link></Button>
                 </ThemeProvider>
               </ListItemButton>
@@ -254,6 +260,9 @@ export default function App() {
                 <Route path='/pedido' element={<CadastroPedido />} />
                 <Route path='/servico' element={<Servico />} />
                 <Route path='/operacao' element={<Operacao />} />
+                <Route path='/relatorio' element={<Relatorio />} />
+                <Route path='/corte' element={<CortePecas />} />
+                <Route path='/modelo' element={<Modelo />} />
               </Routes>
             </Box>
           </Main>

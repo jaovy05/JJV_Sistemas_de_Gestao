@@ -8,8 +8,11 @@ import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
 import SimpleAlert from '../Alerts/SuccessAlert';
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
 function TablePedido() {
   const [pedidos, setPedidos] = React.useState([]);
   const [pedidoSelecionado, setPedidoSelecionado] = React.useState(null);
@@ -17,7 +20,10 @@ function TablePedido() {
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> a639927 (criando relatorio, corte de peças e modelo)
   React.useEffect(() => {
     async function fetchPedidos() {
       try {
