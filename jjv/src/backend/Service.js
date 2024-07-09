@@ -26,13 +26,9 @@ passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
       "WHERE cod = $1", 
       [jwt_payload.sub]);
 
-<<<<<<< HEAD
       if (user && user.inativo !== 1) {
         
         user.isAdm = jwt_payload.adm === 1;
-=======
-      if (user) {
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
         return done(null, user);
       } else {
         return done(null, false);
@@ -63,16 +59,11 @@ app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await db.one(
-<<<<<<< HEAD
       "SELECT f.senha, f.adm, p.cod, p.email, p.inativo, p.nome FROM pessoa as p " +
-=======
-      "SELECT f.senha, p.* FROM pessoa as p " +
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
       "join funcionario as f on p.cod = f.codp WHERE email = $1", 
       [email]
     );
 
-<<<<<<< HEAD
      const passwordMatch = await bcrypt.compare(
        password,
        user.senha,
@@ -84,20 +75,6 @@ app.post('/login', async (req, res) => {
          {expiresIn: "10h"}
         );
       res.json({ message: 'Authenticated', token, cod: user.cod, isAdm: user.adm === 1});
-=======
-    // const passwordMatch = await bcrypt.compare(
-    //   password,
-    //   user.senha,
-    // );
-
-    if (user && user.email === email && user.senha === password ){
-      const payload = { sub: user.cod };
-      const token = jwt.sign(payload, opts.secretOrKey, {
-        issuer: opts.issuer,
-        audience: opts.audience
-      });
-      res.json({ message: 'Authenticated', token, cod: user.cod});
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -141,16 +118,6 @@ app.post('/adm', async(req, res) => {
 });
 // Rotas protegidas
 
-<<<<<<< HEAD
-app.get('/check/user', auth, (req, res) => {
-  if (req.user) {
-    res.json({ isAdm: req.user.isAdm, userName: req.user.nome });
-  } else {
-    res.status(401).json({ message: 'Unauthorized' });
-  }
-});
-=======
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
 
 app.get('/cadastrar/pessoas/:id', auth, async (req, res) => {
   try {
@@ -235,7 +202,7 @@ app.delete('/cadastrar/pessoas/:id', auth, async (req, res) => {
       res.status(400).json({ error: "Erro ao remover funcionario. Não existe o cod informado"});
     else  res.status(500).json({ error: error});
   }
-});
+}); 
 
 app.get('/funcionario', auth, async (req, res) => {
   try {
@@ -473,11 +440,8 @@ app.delete('/servico/:os', auth, async(req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
 /* TERCEIRIZADO */
 
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
 app.get('/terceirizado', auth, async (req, res) => {
   try {
     const funcionario = await db.many(
@@ -535,10 +499,7 @@ app.put('/terceirizado/:id', auth, async(req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
 /* CLIENTE */
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
 
 app.get('/cliente', auth, async (req, res) => {
   try {
@@ -597,11 +558,8 @@ app.put('/cliente/:id', auth, async(req, res) => {
   }
 });
 
-<<<<<<< HEAD
-=======
 /* PEDIDO */
 
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
 app.get('/pedido', auth, async (req, res) => {
   try {
     const pessoas = await db.many(
@@ -618,10 +576,7 @@ app.get('/pedido', auth, async (req, res) => {
 app.post('/pedido', auth, async(req, res) => {
   try {
     const pedido = req.body;
-<<<<<<< HEAD
-=======
 
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
     const novoPedido = await db.one(
       "INSERT INTO pedido (cod, pedido, op, comp, qtdp, qtdm, qtdg, qtdgg, qtdxgg, avm,obs, cnpjc,codf,codt) "+
       "VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14) RETURNING cod;",
@@ -656,7 +611,6 @@ app.put('/pedido/:id', auth, async (req, res) => {
   }
 });
 
-<<<<<<< HEAD
 app.get('/grafico', auth, async (req, res) => {
   try {
     const ano = new Date().getFullYear() - 1;
@@ -679,12 +633,11 @@ app.get('/grafico', auth, async (req, res) => {
     }
   }
 });
-=======
 /* CORTE DE PEÇAS */
 
 app.get('/corte', auth, async (req, res) => {
   try {
-    const cortes = await db.many("SELECT * FROM corte ORDER BY codp DESC");
+    const cortes = await db.any("SELECT * FROM corte ORDER BY codp DESC");
     res.json(cortes);
   } catch (error) {
     if (error instanceof db.$config.pgp.errors.QueryResultError) 
@@ -828,7 +781,6 @@ app.post('/relatorio', async (req, res) => {
   }
 });
 
->>>>>>> a639927 (criando relatorio, corte de peças e modelo)
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)
