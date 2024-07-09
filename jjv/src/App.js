@@ -223,10 +223,10 @@ export default function App() {
                     <List component="div" disablePadding>
                       <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/pedido">Cadastrar Pedido</Link></Button>
-                        {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>}
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>
                         {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>}
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/corte">Cadastrar Corte de Peças</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/modelo">Cadastrar Modelo</Link></Button>
+                        {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/modelo">Cadastrar Modelo</Link></Button>}
                       </ListItemButton>
                     </List>
                   </Collapse>
@@ -241,7 +241,7 @@ export default function App() {
                       </ListItemButton>
                     </List>
                   </Collapse>}
-                  <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/relatorio">Relatório</Link></Button>
+                  {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/relatorio">Relatório</Link></Button>}
                   <Button onClick={sair} variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/">Sair</Link></Button>
                 </ThemeProvider>
               </ListItemButton>

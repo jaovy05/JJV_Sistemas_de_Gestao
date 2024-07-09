@@ -92,6 +92,11 @@ app.post('/logout', (req, res) => {
   }
 });
 
+app.get('/check/user', auth, (req, res) => {
+  res.json({ isAdm: req.user.isAdm, userName: req.user.nome });
+});
+
+
 app.post('/adm', async(req, res) => {
   const saltRounds = 9;
   try {
