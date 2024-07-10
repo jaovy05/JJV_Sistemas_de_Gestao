@@ -10,15 +10,12 @@ import Sheet from '@mui/joy/Sheet';
 import Icon from '@mdi/react';
 import { mdiSquareEditOutline, mdiDeleteForeverOutline } from '@mdi/js';
 
-
-
 function TableServico() {
   const [open, setOpen] = React.useState(false);
   const [servicos, setServico] = useState([]);
   const [servicoSelecionado, setServicoSelecionado] = useState();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
 
   //busca servicos na api
   useEffect(() => {
@@ -36,23 +33,18 @@ function TableServico() {
     };
     fetchServicos();
   }, []);
-  //
-
 
   //abrir modal
   const OpenModal = (servico) => {
     setServicoSelecionado(servico);
     setOpen(true);
   };
-  //
-
 
   //atualiza 0 estado da servico selecionada
   const handleChange = (e) => {
     const { name, value } = e.target;
     setServicoSelecionado(prevServico => ({ ...prevServico, [name]: value }));
   };
-  //
 
   //envia a requisição para editar servico[PUT]
   const handleEditServico = async () => {
@@ -76,7 +68,6 @@ function TableServico() {
       console.error('Erro ao editar servico', error);
     }
   };
-  //
 
   //seta o estado inicial da nova servico
   const AdicionarServico = ({ addNewServico }) => {
@@ -104,7 +95,6 @@ function TableServico() {
       const { name, value } = e.target;
       setNovoServico(prevServico => ({ ...prevServico, [name]: value }));
     };
-    //
 
     const handleDateChange = (event) => {
       setNovoServico((prevServico) => ({
@@ -112,7 +102,6 @@ function TableServico() {
         date: event.target.value,
       }));
     };
-
 
     //envia a requisição para adicionar servico[POST]
     const AddServico = async () => {
@@ -153,9 +142,7 @@ function TableServico() {
         console.error('Erro ao adicionar serviços', error.message);
       }
     };
-    //
-
-
+    
     //criar as cores estilizadas
     const theme = createTheme({
       palette: {
@@ -183,9 +170,6 @@ function TableServico() {
       { id: 'delete', label: 'Deletar' }
     ];
 
-    // Format date
-
-
     function formatDate(dateString) {
       const date = new Date(dateString);
       const year = date.getFullYear();
@@ -193,8 +177,6 @@ function TableServico() {
       const day = String(date.getDate()).padStart(2, '0');
       return `${year}-${month}-${day}`;
     }
-
-
 
     //criar linhas popula a tabela
     const rows = servicos.map(servico => ({
@@ -207,8 +189,6 @@ function TableServico() {
         <Icon path={mdiDeleteForeverOutline} size={1} />
       </IconButton></Tooltip>
     }));
-
-    //
 
     //deletar servico
     const DeleteServico = async (os) => {
@@ -227,8 +207,6 @@ function TableServico() {
         console.error('Erro ao deletar servico', error);
       }
     };
-    //
-
 
     //manipulação de paginação
     const handleChangePage = (event, newPage) => {

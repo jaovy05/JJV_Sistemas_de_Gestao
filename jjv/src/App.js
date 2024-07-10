@@ -23,6 +23,7 @@ import Collapse from '@mui/material/Collapse';
 import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import './components/Home/Home.css';
+import './components/CadastroPessoa/CadastroPessoa.css'
 import { Typography } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -30,13 +31,14 @@ import CadastroFuncionario from './components/Funcionario/CadastroFuncionario';
 import CadTerc from './components/Terceirizado/CadTerc';
 import CadCliente from './components/Cliente/CadCliente';
 import CadastroPedido from './components/Pedido/CadPedido';
-import Servico from './components/Servico/Servico';
+import Servico from './components/Servico/CadServico';
 import Operacao from './components/Operacao/Operacao';
-import Relatorio from './components/Relatorio/relatorio'; 
-import CortePecas from './components/CortePecas/CadCortePecas';
-import Modelo from './components/Modelo/CadModelo';
-import Grafico from './components/Relatorio/Grafico';
-const drawerWidth = 240;
+import Relatorio from './components/Relatorio/CadRelatorio';
+import CadCortePecas from './components/CortePecas/CadCortePecas';
+import CadModelo from './components/Modelo/CadModelo';
+import CadTecido from './components/Tecido/CadTecido';
+import Desligamento from './components/Desligamento/desligamento';
+const drawerWidth = 300;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
   ({ theme, open }) => ({
@@ -150,6 +152,9 @@ export default function App() {
       green: { main: '#3f5a40c5' },
       greenBar: { main: '#2d5d2ea6' },
     },
+    typography: {
+      fontSize: '1.5rem'
+    }
   });
 
 
@@ -216,10 +221,11 @@ export default function App() {
             <List>
               <ListItemButton sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
                 <ThemeProvider theme={theme}>
-                  <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/home">Início</Link></Button>
-                  <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={dropDownCad} className="link1">
-                    Cadastrar{openCad ? <ExpandLess /> : <ExpandMore />}
-                  </Button>
+
+                  <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link1" to="/home">Início</Link></Button>
+
+                  <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }} onClick={dropDownCad} className="link1">Cadastrar{openCad ? <ExpandLess /> : <ExpandMore />}</Button>
+
                   <Collapse in={openCad} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
@@ -260,9 +266,10 @@ export default function App() {
                 <Route path='/servico' element={<Servico />} />
                 <Route path='/operacao' element={<Operacao />} />
                 <Route path='/relatorio' element={<Relatorio />} />
-                <Route path='/corte' element={<CortePecas />} />
-                <Route path='/modelo' element={<Modelo />} />
-                <Route path='/grafico' element={<Grafico />} />
+                <Route path='/corte' element={<CadCortePecas />} />
+                <Route path='/modelo' element={<CadModelo />} />
+                <Route path='/tecido' element={<CadTecido />} />
+                <Route path='/desligamento' element={<Desligamento />} />
               </Routes>
             </Box>
           </Main>

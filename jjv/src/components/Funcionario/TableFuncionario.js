@@ -53,6 +53,7 @@ function TableFuncionario() {
 
       if (response.status === 201) {
         setFuncionarios(funcionarios.map(funcionario => funcionario.codp === funcionarioSelecionado.codp ? funcionarioSelecionado : funcionario));
+        window.location.reload();
         setOpen(false);
       } else {
         console.error('Erro ao editar ionário');

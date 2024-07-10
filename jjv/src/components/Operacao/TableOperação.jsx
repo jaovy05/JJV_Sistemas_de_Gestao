@@ -53,6 +53,7 @@ function TableOperacao() {
 
       if (response.status === 201) {
         setOperacoes(operacoes.map(operacao => operacao.cod === operacaoSelecionada.cod ? operacaoSelecionada : operacao));
+        window.location.reload();
         setOpen(false);
       } else {
         console.error('Erro ao editar operacão');
