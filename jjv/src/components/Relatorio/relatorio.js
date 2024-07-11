@@ -25,22 +25,25 @@ function TableRelatorio() {
     dataFim: ''
   });
 
+  
   const fetchRelatorio = async (filters) => {
     try {
-      const response = await axios.get("http://localhost:5000/relatorio", filters, {
+      console.log(filters)
+      const response = await axios.post("http://localhost:5000/relatorio", filters, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`
         }
       });
       setRelatorios(response.data);
+      console.log(relatorio);
     } catch (error) {
       console.error(error);
     }
   };
 
   React.useEffect(() => {
-    fetchRelatorio({});
+    fetchRelatorio(novoRelatorio);
   }, []);
 
   const isMobile = useMediaQuery('(max-width:600px)');
@@ -57,9 +60,12 @@ function TableRelatorio() {
 
   const columns = [
     { id: 'terceirizado', label: 'Terceirizado', minWidth: isMobile ? '100%' : 120 },
+    { id: 'cnpjt', label: 'Terceirizado CNPJ', minWidth: isMobile ? '70%' : 120 },
     { id: 'cliente', label: 'Cliente', minWidth: isMobile ? '100%' : 120 },
+    { id: 'cnpjc', label: 'Cliente CNPJ', minWidth: isMobile ? '70%' : 120 },
     { id: 'dataInicio', label: 'Data de Retirada', minWidth: isMobile ? '100%' : 120 },
     { id: 'dataFim', label: 'Data de Entrega', minWidth: isMobile ? '100%' : 120 },
+    { id: 'valor', label: 'Valor', minWidth: isMobile ? '80%' : 120 },
   ];
 
   function formatDate(dateString) {
@@ -72,10 +78,8 @@ function TableRelatorio() {
 
   const rows = relatorio.map(relatorio => ({
     ...relatorio,
-    data: formatDate(relatorio.data),
-    edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(relatorio)}>
-      <Icon path={mdiSquareEditOutline} size={1} />
-    </IconButton></Tooltip>,
+    dataInicio: formatDate(relatorio.data_inicio),
+    dataFim: formatDate(relatorio.data_fim),
   }));
 
   const handleChangePage = (event, newPage) => {
@@ -115,7 +119,7 @@ function TableRelatorio() {
 
   return (
     <Box component="form" sx={{ minWidth: 'sm', display: 'flex', flexDirection: 'column', gap: 3 }}>
-      <Typography variant="h4" component="h1">Relatorio</Typography>
+      <Typography variant="h4" component="h1">Relatório</Typography>
       <ThemeProvider theme={theme}>
         <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap" direction={{ sm: 'column', md: 'row' }} sx={{ minWidth: '100%' }}>
           <TextField
@@ -176,7 +180,7 @@ function TableRelatorio() {
         <Grid container>
           <Grid item xs={12}>
             <TableContainer sx={{ maxHeight: 440 }}>
-              <Table stickyHeader aria-label="sticky table">
+            <Table stickyHeader aria-label="sticky table">
                 <TableHead>
                   <TableRow>
                     {columns.map((column) => (
@@ -187,8 +191,8 @@ function TableRelatorio() {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => (
-                    <TableRow hover role="checkbox" tabIndex={-1} key={row.id}>
+                  {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                       {columns.map((column) => {
                         const value = row[column.id];
                         return (

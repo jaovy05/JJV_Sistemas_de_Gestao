@@ -152,7 +152,7 @@ export default function App() {
       greenBar: { main: '#2d5d2ea6' },
     },
     typography: {
-      fontSize: '1.5rem'
+      fontSize: 14
     }
   });
 
@@ -228,11 +228,12 @@ export default function App() {
                   <Collapse in={openCad} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/pedido">Cadastrar Pedido</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/tecido">Cadastrar Tecido</Link></Button>
-                        {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>}
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/corte">Cadastrar Corte de Peças</Link></Button>
-                        {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/modelo">Cadastrar Modelo</Link></Button>}
+                        <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/pedido">Cadastrar Pedido</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/tecido">Cadastrar Tecido</Link></Button>
+                        {isAdm && <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>}
+                        <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/corte">Cadastrar Corte de Peças</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/servico">Cadastrar Serviço</Link></Button>
+                        {isAdm && <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/modelo">Cadastrar Modelo</Link></Button>}
                       </ListItemButton>
                     </List>
                   </Collapse>
@@ -241,9 +242,9 @@ export default function App() {
                     {isAdm && <Collapse in={openRh} timeout="auto" unmountOnExit>
                     <List component="div" disablePadding>
                       <ListItemButton sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/funcionario">Cadastrar Funcionário</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/terceirizado">Cadastrar Terceirizado</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/cliente">Cadastrar Cliente</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/funcionario">Cadastrar Funcionário</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/terceirizado">Cadastrar Terceirizado</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/cliente">Cadastrar Cliente</Link></Button>
                       </ListItemButton>
                     </List>
                   </Collapse>}

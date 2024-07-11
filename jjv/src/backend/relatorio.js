@@ -26,39 +26,45 @@ async function grafico(req, res) {
 
   async function relatorio(req, res) {
     const { terceirizado, cliente, dataInicio, dataFim } = req.body;
-  
     let query = 
-      "SELECT t.cnpj as terceirizado, s.data_ter as dataRetirada, s.data_ent as dataEntrega, o.valor "+
+      "SELECT pt.nome as terceirizado, s.data_ter as data_inicio, s.data_ent as data_fim, o.valor * e.qtd_env as valor, pc.nome as cliente, "+
+      "t.cnpj as cnpjt, cli.cnpj as cnpjc " +
       "FROM terceirizado t "+
-      "JOIN serv_ter st ON t.cnpj = st.cnpjt "+
-      "JOIN servico s ON st.oss = s.os "+
-      "JOIN serv_op so ON s.os = so.oss "+
-      "JOIN operacao o ON so.codop = o.cod "+
-      "JOIN encaminha e on e.os_serv = s.os "+
-      "JOIN corte c on c.tam = e.tam, c.codp = e.tam_ct "+
-      "JOIN pedido p on p.op = c.codp "+
-      "JOIN cliente cli on cli.cnpj = p.cnpjc "
+        "JOIN serv_ter st ON t.cnpj = st.cnpjt "+
+        "JOIN servico s ON st.oss = s.os "+
+        "JOIN serv_op so ON s.os = so.oss "+
+        "JOIN operacao o ON so.codop = o.cod "+
+        "JOIN encaminha e on e.os_serv = s.os "+
+        "JOIN corte c on c.tam = e.tam_ct AND c.codp = e.codp "+
+        "JOIN pedido p on p.op = c.codp "+
+        "JOIN cliente cli on cli.cnpj = p.cnpjc " +
+        "JOIN pessoa pt on pt.cod = t.codp " +
+        "JOIN pessoa pc on pc.cod = cli.codp "+
       "WHERE 1=1";
-  
+    
     if (terceirizado) {
-      query += ` AND t.cnpj = ${terceirizado}`;
+      query += ` AND pt.nome ilike '%${terceirizado}%'`;
     }
     if (cliente) {
-      query += ` AND c.cnpj = ${cliente}`;
+      query += ` AND pc.nome ilike '%${cliente}%'`;
     }
+
     if (dataInicio) {
-      query += ` AND s.data_ter >= ${dataInicio}`;
+      query += ` AND s.data_ter >= '${dataInicio}'`;
     }
     if (dataFim) {
-      query += ` AND s.data_ent <= ${dataFim}`;
+      query += ` AND s.data_ent <= '${dataFim}'`;
     }
   
     try {
-      /* const result = await db.any(query);
-      res.json(result); */
+      const result = await db.any(query);
+      res.json(result); 
     } catch (error) {
-      console.error(error);
-      res.status(500).send('Server error');
+      if (error instanceof db.$config.pgp.errors.QueryResultError) {
+        res.status(400).json({ error: "Erro ao buscar relatorio " + error.message });
+      } else {
+        res.status(500).json({ error: "erro no servidor " + error.message });
+      }
     }
   };
 

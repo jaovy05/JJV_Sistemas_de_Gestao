@@ -179,7 +179,7 @@ app.put('/modelo/:id', auth, modelo.put);
 
 /* RELATÓRIO */
 
-app.get('/relatorio', auth, relatorio.relatorio);
+app.post('/relatorio', auth, relatorio.relatorio);
 app.get('/grafico', auth, relatorio.grafico);
 
 app.listen(port, () => {
