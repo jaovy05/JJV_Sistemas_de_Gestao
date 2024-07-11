@@ -1,4 +1,3 @@
-const { USER, HOST, DATABASE, PASSWORD, PORT } = require("./Auth/Auth.js");
 const express = require('express');
 const app = express();
 const port = 5000;
@@ -7,9 +6,9 @@ const JwtStrategy = require('passport-jwt').Strategy;
 const ExtractJwt = require('passport-jwt').ExtractJwt;
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
-const pgp = require("pg-promise")({});
-const db = pgp(`postgres://${USER}:${PASSWORD}@${HOST}:${PORT}/${DATABASE}`);
+const db = require('./Database.js');
 const bcrypt = require("bcrypt");
+const pessoas = require('./Pessoas.js')
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -126,155 +125,33 @@ app.get('/check/user', auth, (req, res) => {
 });
 // Rotas protegidas
 
-/* CADASTRAR PESSOAS */
-
-app.get('/cadastrar/pessoas/:id', auth, async (req, res) => {
-  try {
-    const id = req.params.id;
-    const pessoa = await db.oneOrNone("SELECT * FROM pessoa WHERE cod = $1", [id]);
-    
-    if (pessoa) {
-      res.json(pessoa);
-    } else {
-      res.status(404).json({ message: 'Pessoa não encontrada' });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get('/cadastrar/pessoas', auth, async (req, res) => {
-  try {
-    const pessoas = await db.many(
-      "SELECT * FROM pessoa ORDER BY cod DESC"
-    );
-    res.json(pessoas);
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao buscar pessoa(s): " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
-
-app.post('/cadastrar/pessoas', auth, async (req, res) => {
-  try {
-    const pessoa = req.body;
-    const novaPessoa = await db.one(
-      "INSERT INTO pessoa (nome, email, data, endn, end_logra, telefone1, telefone2) "+
-      "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-      [pessoa.nome, pessoa.email, pessoa.data, pessoa.endn, pessoa.end_logra, pessoa.telefone1, pessoa.telefone2]);
-
-    res.status(200).json(novaPessoa);
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao cadastrar pessoa: " + error.message });
-    else  res.status(500).json({ error: "Erro ao cadas " + error.message});
-  }
-});
-
-app.put('/cadastrar/pessoas/:id', auth, async (req, res) => {
-  try {
-    const id = req.params.id;
-    const pessoa = req.body;
-    const updatedPessoa = await db.one(
-      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1 = $6, telefone2 = $7 "+
-      "WHERE cod = $8 RETURNING *",
-      [pessoa.nome, pessoa.email, pessoa.data, pessoa.endn, pessoa.end_logra, pessoa.telefone1, pessoa.telefone2, id]
-    );
-    res.json(updatedPessoa);
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.sendStatus(304);
-    else if (error.code === 23502)
-      res.sendStatus(400).json({error: "Preencha a coluna: " + error.column });
-    else if (error.code === 22007)
-      res.sendStatus(400).json({error: "Preencha a data corretamente dd/mm/aaaa"});
-    else if (error.code === 22001)
-      res.sendStatus(400).json({error: "Tamanho da string violada"});
-    else  
-      res.status(500).json({error});
-  }
-});
-
-app.delete('/cadastrar/pessoas/:id', auth, async (req, res) => {
-  try {
-    const id = req.params.id;
-    await db.one(
-      "delete from pessoa where cod = $1 returning nome",
-      [id]
-    );
-    res.json({ message: 'Pessoa removida com sucesso' });
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao remover funcionario. Não existe o cod informado"});
-    else  res.status(500).json({ error: error});
-  }
-});
+/*  PESSOAS */
 
 /* FUNCIONÁRIO */
 
-app.get('/funcionario', auth, async (req, res) => {
-  try {
-    const funcionario = await db.many(
-      "SELECT f.*, p.* FROM funcionario f join pessoa p on p.cod = f.codp  ORDER BY codp DESC"
-    );
-    res.json(funcionario);
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao buscar funcionário(s): " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
+app.get('/funcionario', auth, pessoas.getFunc);
 
-app.post('/funcionario', auth, async(req, res) => {
-  const saltRounds = 9;
-  try {
-    const func = req.body;
+app.post('/funcionario', auth, pessoas.postFunc);
 
-    const pessoa = await db.one(
-      "INSERT INTO pessoa (nome, email, data, endn, end_logra, telefone1, telefone2) "+
-      "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING cod;",
-      [func.nome, func.email, func.data, func.endn, func.end_logra, func.telefone1, func.telefone2]
-    ); 
-    const salt = bcrypt.genSaltSync(saltRounds);
-    const password = bcrypt.hashSync(func.senha, salt);
-    await db.none(
-      "INSERT INTO funcionario (cpf, senha, pis, codp) "+
-      "VALUES ($1, $2, $3, $4);",
-      [func.cpf, password, func.pis, pessoa.cod]
-    );
-    res.status(201).json({menssage: "Funcionário " + func.nome + " registrado com sucesso." });
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao cadastrar funcionario: " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
+app.put('/funcionario/:id', auth, pessoas.putFunc);
 
-app.put('/funcionario/:id', auth, async(req, res) => {
-  const saltRounds = 9;
-  try {
-    const id = req.params.id;
-    const func = req.body;
 
-    const funcionario = await db.one(
-      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7"+
-      "WHERE cod = $8 RETURNING cod;",
-      [func.nome, func.email, func.data, func.endn, func.end_logra, func.telefone1, func.telefone2, id]
-    ); 
-    const salt = bcrypt.genSaltSync(saltRounds);
-    const password = bcrypt.hashSync(func.senha, salt);
-    await db.none(
-      "UPDATE funcionario SET cpf = $1, senha = $2, pis = $3 WHERE codp = $4;",
-      [func.cpf, password, func.pis, funcionario.cod]
-    );
-    res.status(201).json({menssage: "Funcionário " + func.nome + " registrado com sucesso." });
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao cadastrar funcionario: " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
+/* CLIENTE */
+
+app.get('/cliente', auth, pessoas.getCli);
+
+app.post('/cliente', auth, pessoas.postCli);
+
+app.put('/cliente/:id', auth, pessoas.putCli);
+
+
+/* TERCEIRIZADO */
+
+app.get('/terceirizado', auth, pessoas.getTer);
+
+app.post('/terceirizado', auth, pessoas.postTer);
+
+app.put('/terceirizado/:id', auth, pessoas.putTer);
 
 /* OPERAÇÃO */
 
@@ -453,123 +330,6 @@ app.delete('/servico/:os', auth, async(req, res) => {
   }
 });
 
-/* TERCEIRIZADO */
-
-app.get('/terceirizado', auth, async (req, res) => {
-  try {
-    const funcionario = await db.many(
-      "SELECT t.*, p.* FROM terceirizado t join pessoa p on p.cod = t.codp  ORDER BY codp DESC"
-    );
-    res.json(funcionario);
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao buscar tercerizado(s): " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
-
-app.post('/terceirizado', auth, async(req, res) => {
-  try {
-    const terc = req.body;
-
-    const pessoa = await db.one(
-      "INSERT INTO pessoa (nome, email, data, endn, end_logra, telefone1, telefone2) "+
-      "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING cod;",
-      [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2]
-    ); 
-    await db.none(
-      "INSERT INTO terceirizado (cnpj,codp) "+
-      "VALUES ($1, $2);",
-      [terc.cnpj, pessoa.cod]
-    );
-    res.status(201).json({menssage: "Terceirizado " + terc.nome + " registrado com sucesso." });
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao cadastrar terceirizado: " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
-
-app.put('/terceirizado/:id', auth, async(req, res) => {
-  try {
-    const id = req.params.id;
-    const terc = req.body;
-
-    const terceirizado = await db.one(
-      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7 "+
-      "WHERE cod = $8 RETURNING cod;",
-      [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2, id]
-    ); 
-    await db.none(
-      "UPDATE terceirizado SET cnpj = $1 WHERE codp = $2;",
-      [terc.cnpj,terceirizado.cod]
-    );
-    res.status(201).json({menssage: "Terceirizado " + terc.nome + " registrado com sucesso." });
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao cadastrar terceirizado " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
-
-/* CLIENTE */
-
-app.get('/cliente', auth, async (req, res) => {
-  try {
-    const funcionario = await db.many(
-      "SELECT c.*, p.* FROM cliente c join pessoa p on p.cod = c.codp  ORDER BY codp DESC"
-    );
-    res.json(funcionario);
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao buscar cliente(s): " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
-
-app.post('/cliente', auth, async(req, res) => {
-  try {
-    const cli = req.body;
-
-    const pessoa = await db.one(
-      "INSERT INTO pessoa (nome, email, data, endn, end_logra, telefone1, telefone2) "+
-      "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING cod;",
-      [cli.nome, cli.email, cli.data, cli.endn, cli.end_logra, cli.telefone1, cli.telefone2]
-    ); 
-    await db.none(
-      "INSERT INTO cliente (cnpj,codp) "+
-      "VALUES ($1, $2);",
-      [cli.cnpj, pessoa.cod]
-    );
-    res.status(201).json({menssage: "Terceirizado " + cli.nome + " registrado com sucesso." });
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao cadastrar cliente: " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
-
-app.put('/cliente/:id', auth, async(req, res) => {
-  try {
-    const id = req.params.id;
-    const cli = req.body;
-
-    const cliente = await db.one(
-      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7"+
-      "WHERE cod = $8 RETURNING cod;",
-      [cli.nome, cli.email, cli.data, cli.endn, cli.end_logra, cli.telefone1, cli.telefone2, id]
-    ); 
-    await db.none(
-      "UPDATE cliente SET cnpj = $1 WHERE codp = $2;",
-      [cli.cnpj,cliente.cod]
-    );
-    res.status(201).json({menssage: "Cliente " + cli.nome + " registrado com sucesso." });
-  } catch (error) {
-    if (error instanceof db.$config.pgp.errors.QueryResultError) 
-      res.status(400).json({ error: "Erro ao cadastrar cliente " + error.message });
-    else  res.status(500).json({ error: error.message});
-  }
-});
 
 /* PEDIDO */
 

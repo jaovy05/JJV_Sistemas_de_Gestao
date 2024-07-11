@@ -9,7 +9,6 @@ import Modal from '@mui/joy/Modal';
 import Alert from '@mui/material/Alert';
 
 
-
 function TableTerc() {
   const [terceirizados, setTerceirizados] = React.useState([]);
   const [terceirizadoSelecionado, setTerceirzadoSelecionado] = React.useState(null);
