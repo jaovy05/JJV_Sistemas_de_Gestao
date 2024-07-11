@@ -3,9 +3,15 @@ const db = require('./database.js');
 async function getSv(req, res){
     try {
       const servicoTer = await db.any(
-        "select * from servico as s "+
+        "select s.os, p.nome as ter, e.codp, e.tam_ct as tam, qtd_env as qtd, "+
+        "data_ent as datee, data_ent as datet, o.cod as op "+
+        "from servico as s "+
         "join serv_ter as st on st.oss = s.os "+
-        "join terceirizado as t on t.cnpj = st.cnpjt;"
+        "join terceirizado as t on t.cnpj = st.cnpjt " +
+        "join pessoa p on p.cod = t.codp "+
+        "join encaminha e on e.os_serv = s.os "+
+        "join serv_op sv on sv.oss = s.os "+
+        "join operacao o on o.cod = sv.codop"
       );
   
       res.json(servicoTer);
