@@ -36,7 +36,7 @@ async function put(req, res){
 async function post(req, res){
     try {
         const tecido = req.body;
-        await db.one(
+        await db.none(
             "insert into tecido (dsc, cod, nome) "+
                 "values ($1, $2, $3)",
             [tecido.dsc, tecido.cod, tecido.nome]
