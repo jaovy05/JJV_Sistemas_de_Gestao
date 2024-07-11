@@ -41,6 +41,7 @@ async function post(req, res){
                 "values ($1, $2, $3)",
             [tecido.dsc, tecido.cod, tecido.nome]
         );
+        res.sendStatus(201);
     } catch (error) {
         if (error instanceof db.$config.pgp.errors.QueryResultError) {
             res.status(400).json({ error: "Erro no sql criar tecido " + error.message });
