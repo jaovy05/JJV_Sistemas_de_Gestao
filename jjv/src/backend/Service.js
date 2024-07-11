@@ -16,6 +16,7 @@ const pedido = require('./pedido.js');
 const corte = require('./corte.js');
 const modelo = require('./modelo.js');
 const relatorio = require('./relatorio.js');
+const tecido = require('./tecido.js');
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -126,6 +127,9 @@ app.get('/check/user', auth, (req, res) => {
 
 /*  PESSOAS */
 
+app.post('/desligamento', auth, pessoas.filtro);
+app.get('/desligamento', auth, pessoas.getAll);
+app.delete('/desligamento/:cpfCnpj', auth, pessoas.deleta);
 /* FUNCIONÁRIO */
 
 app.get('/funcionario', auth, pessoas.getFunc);
@@ -153,7 +157,7 @@ app.delete('/operacao/:cod', auth, operacao.deleteOp);
 
 /* SERVICO */
 
-app.get('/servico/t', auth, servico.getSv);
+app.get('/servico', auth, servico.getSv);
 app.post('/servico', auth, servico.postSv);
 app.put('/servico/:os', auth, servico.putSv);
 app.delete('/servico/:os', auth, servico.deleteSv);
@@ -181,6 +185,12 @@ app.put('/modelo/:id', auth, modelo.put);
 
 app.post('/relatorio', auth, relatorio.relatorio);
 app.get('/grafico', auth, relatorio.grafico);
+
+/* TECIDO */
+
+app.get('/tecido', auth, tecido.get);
+app.post('/tecido', auth, tecido.post);
+app.put('/tecido/cod', auth, tecido.put);
 
 app.listen(port, () => {
   console.log(`App running on port ${port}.`)

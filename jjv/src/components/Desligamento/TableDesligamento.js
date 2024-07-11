@@ -39,9 +39,8 @@ function TableDesligamento() {
           Authorization: `Bearer ${localStorage.getItem('token')}`
         },
       });
-      if (response.status === 201) {
-        const newDesligamento = response.data;
-        setDesligamentos([...desligamentos, newDesligamento]);
+      if (response.status === 200) {
+        setDesligamentos(response.data);
         setNovoDesligamento({ nome: '', cpfCnpj: '' });
       } else {
         console.error('Erro ao cadastrar desligamento');

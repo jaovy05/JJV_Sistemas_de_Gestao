@@ -5,7 +5,9 @@ const bcrypt = require("bcrypt");
 async function getFunc(req, res) {
     try {
         const funcionario = await db.many(
-        "SELECT f.*, p.* FROM funcionario f join pessoa p on p.cod = f.codp  ORDER BY codp DESC"
+        "SELECT f.*, p.* FROM funcionario f join pessoa p on p.cod = f.codp "+
+        "where p.inativo is null "+
+        " ORDER BY codp DESC"
         );
         res.json(funcionario);
     } catch (error) {
@@ -68,10 +70,12 @@ async function putFunc(req, res) {
 
 async function getCli(req, res) {
     try {
-      const funcionario = await db.many(
-        "SELECT c.*, p.* FROM cliente c join pessoa p on p.cod = c.codp  ORDER BY codp DESC"
+      const cliente = await db.many(
+        "SELECT c.*, p.* FROM cliente c join pessoa p on p.cod = c.codp "+
+        "where p.inativo is null "+
+        "ORDER BY codp DESC;"
       );
-      res.json(funcionario);
+      res.json(cliente);
     } catch (error) {
       if (error instanceof db.$config.pgp.errors.QueryResultError) 
         res.status(400).json({ error: "Erro ao buscar cliente(s): " + error.message });
@@ -127,10 +131,12 @@ async function putCli(req, res)  {
 
 async function getTer(req, res) {
     try {
-      const funcionario = await db.many(
-        "SELECT t.*, p.* FROM terceirizado t join pessoa p on p.cod = t.codp  ORDER BY codp DESC"
+      const terceirizado = await db.many(
+        "SELECT t.*, p.* FROM terceirizado t join pessoa p on p.cod = t.codp "+
+        "where p.inativo is null "+
+        "ORDER BY codp DESC;"
       );
-      res.json(funcionario);
+      res.json(terceirizado);
     } catch (error) {
       if (error instanceof db.$config.pgp.errors.QueryResultError) 
         res.status(400).json({ error: "Erro ao buscar tercerizado(s): " + error.message });
@@ -138,53 +144,115 @@ async function getTer(req, res) {
     }
   };
 
-  async function postTer(req, res)  {
+async function postTer(req, res)  {
+  try {
+    const terc = req.body;
+
+    const pessoa = await db.one(
+      "INSERT INTO pessoa (nome, email, data, endn, end_logra, telefone1, telefone2) "+
+      "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING cod;",
+      [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2]
+    ); 
+    await db.none(
+      "INSERT INTO terceirizado (cnpj,codp) "+
+      "VALUES ($1, $2);",
+      [terc.cnpj, pessoa.cod]
+    );
+    res.status(201).json({menssage: "Terceirizado " + terc.nome + " registrado com sucesso." });
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao cadastrar terceirizado: " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+};
+
+async function putTer(req, res) {
+  try {
+    const id = req.params.id;
+    const terc = req.body;
+
+    const terceirizado = await db.one(
+      "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7 "+
+      "WHERE cod = $8 RETURNING cod;",
+      [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2, id]
+    ); 
+    await db.none(
+      "UPDATE terceirizado SET cnpj = $1 WHERE codp = $2;",
+      [terc.cnpj,terceirizado.cod]
+    );
+    res.status(201).json({menssage: "Terceirizado " + terc.nome + " registrado com sucesso." });
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao cadastrar terceirizado " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+}
+
+  async function getAll(req, res){
     try {
-      const terc = req.body;
-  
-      const pessoa = await db.one(
-        "INSERT INTO pessoa (nome, email, data, endn, end_logra, telefone1, telefone2) "+
-        "VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING cod;",
-        [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2]
-      ); 
-      await db.none(
-        "INSERT INTO terceirizado (cnpj,codp) "+
-        "VALUES ($1, $2);",
-        [terc.cnpj, pessoa.cod]
+      const all = await db.any(
+        `select coalesce(f.cpf, t.cnpj, c.cnpj) as "cpfCnpj", p.nome, p.email, p.telefone1 as telefone from pessoa p `+
+        "left join funcionario as f on f.codp = p.cod "+
+        "left join terceirizado as t on t.codp = p.cod "+
+        "left join cliente as c on c.codp = p.cod "+
+        "where p.inativo is null "+
+        "order by p.cod desc;"
       );
-      res.status(201).json({menssage: "Terceirizado " + terc.nome + " registrado com sucesso." });
+      res.status(200).json(all);
     } catch (error) {
       if (error instanceof db.$config.pgp.errors.QueryResultError) 
-        res.status(400).json({ error: "Erro ao cadastrar terceirizado: " + error.message });
+        res.status(400).json({ error: "Erro ao buscar pessoas " + error.message });
       else  res.status(500).json({ error: error.message});
     }
+      
   };
-  
-  async function putTer(req, res) {
-    try {
-      const id = req.params.id;
-      const terc = req.body;
-  
-      const terceirizado = await db.one(
-        "UPDATE pessoa SET nome = $1, email = $2, data = $3, endn = $4, end_logra = $5, telefone1= $6, telefone2 = $7 "+
-        "WHERE cod = $8 RETURNING cod;",
-        [terc.nome, terc.email, terc.data, terc.endn, terc.end_logra, terc.telefone1, terc.telefone2, id]
-      ); 
-      await db.none(
-        "UPDATE terceirizado SET cnpj = $1 WHERE codp = $2;",
-        [terc.cnpj,terceirizado.cod]
-      );
-      res.status(201).json({menssage: "Terceirizado " + terc.nome + " registrado com sucesso." });
-    } catch (error) {
-      if (error instanceof db.$config.pgp.errors.QueryResultError) 
-        res.status(400).json({ error: "Erro ao cadastrar terceirizado " + error.message });
-      else  res.status(500).json({ error: error.message});
+
+async function deleta(req, res){
+  try {
+    const cpfCnpj = req.params.cpfCnpj;
+    await db.any (
+      "with ipessoa as "+
+        "(select p.cod from pessoa p "+
+          "left join funcionario as f on f.codp = p.cod "+
+          "left join terceirizado as t on t.codp = p.cod "+
+          "left join cliente as c on c.codp = p.cod "+
+          "where coalesce(f.cpf, t.cnpj, c.cnpj) = $1) "+
+      "update pessoa set inativo = 1 where cod = (select cod from ipessoa);",
+      [cpfCnpj]   
+    );
+    res.sendStatus(200);
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) 
+      res.status(400).json({ error: "Erro ao deletar pessoa " + error.message });
+    else  res.status(500).json({ error: error.message});
+  }
+};
+
+async function filtro(req, res){
+  try {
+    const {nome, cpfCnpj} = req.body;
+    let query = `select coalesce(f.cpf, t.cnpj, c.cnpj) as "cpfCnpj", p.nome, p.email, p.telefone1 as telefone `+
+      "from pessoa p "+
+        "left join funcionario as f on f.codp = p.cod "+
+        "left join terceirizado as t on t.codp = p.cod "+
+        "left join cliente as c on c.codp = p.cod "+
+        "where p.inativo is null ";
+    if(nome) query += ` and p.nome ilike '%${nome}%'`;
+    if(cpfCnpj) query += ` and "cpfCnpj" ilike '%${cpfCnpj}%'`
+
+    const result = await db.any(query);
+    res.status(200).json(result);      
+  } catch (error) {
+    if (error instanceof db.$config.pgp.errors.QueryResultError) {
+      res.status(400).json({ error: "Erro ao buscar relatorio " + error.message });
+    } else {
+      res.status(500).json({ error: "erro no servidor " + error.message });
     }
   }
-
-
+}
 module.exports = {
     getFunc, postFunc, putFunc, 
     getCli, postCli, putCli,
     getTer, postTer, putTer,
+    getAll, deleta, filtro
 };

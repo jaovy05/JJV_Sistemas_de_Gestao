@@ -52,8 +52,17 @@ async function getPed(req, res) {
 
   async function home(req, res) {
     try {
-      const home = await db.many(
-        "SELECT t.*, p.nome, ped.pedido, m.dsc FROM terceirizado t join pessoa p on p.cod = t.codp join cliente c on c.codp = p.cod join pedido ped on ped.cnpjc = c.cnpj join modelo m on m.cnpjc = c.cnpj ORDER BY codp ASC"
+      const home = await db.any(
+        "SELECT p.nome, ped.pedido, m.dsc FROM cliente c "+
+        "join modelo m on m.cnpjc = c.cnpj " +
+        "join pedido ped on ped.cnpjc = c.cnpj "+
+        "join corte co on co.codp = ped.op "+
+        "join encaminha e on e.tam_ct = co.tam and e.codp = co.codp "+
+        "join servico s on s.os = e.os_serv "+
+        "join serv_ter st on st.oss = s.os "+
+        "join terceirizado t on t.cnpj = st.cnpjt "+
+        "join pessoa p on p.cod = t.codp "+
+        " ORDER BY t.codp ASC;"
       );
       res.json(home);
     } catch (error) {

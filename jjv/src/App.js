@@ -245,6 +245,7 @@ export default function App() {
                         <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/funcionario">Cadastrar Funcionário</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/terceirizado">Cadastrar Terceirizado</Link></Button>
                         <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/cliente">Cadastrar Cliente</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1, m: 0.5 }}><Link className="link2" to="/desligamento">Desligamento</Link></Button>
                       </ListItemButton>
                     </List>
                   </Collapse>}
