@@ -23,10 +23,14 @@ const auth = passport.authenticate('jwt', { session: false });
 passport.use(new JwtStrategy(opts, async (jwt_payload, done) => {
   try {
     const user = await db.one(
-      "SELECT * FROM pessoa WHERE cod = $1", 
+      "SELECT p.cod, p.email, p.inativo, f.senha, p.nome FROM pessoa as p "+
+      "JOIN funcionario as f on f.codp = p.cod "+
+      "WHERE cod = $1", 
       [jwt_payload.sub]);
 
-      if (user) {
+      if (user && user.inativo !== 1) {
+        
+        user.isAdm = jwt_payload.adm === 1;
         return done(null, user);
       } else {
         return done(null, false);
@@ -57,7 +61,7 @@ app.post('/login', async (req, res) => {
   try {
     const { email, password } = req.body;
     const user = await db.one(
-      "SELECT f.senha, p.* FROM pessoa as p " +
+      "SELECT f.senha, f.adm, p.cod, p.email, p.inativo, p.nome FROM pessoa as p " +
       "join funcionario as f on p.cod = f.codp WHERE email = $1", 
       [email]
     );
@@ -67,13 +71,12 @@ app.post('/login', async (req, res) => {
        user.senha,
      );
 
-    if (user && user.email === email  && passwordMatch ){
-      const payload = { sub: user.cod };
-      const token = jwt.sign(payload, opts.secretOrKey, {
-        issuer: opts.issuer,
-        audience: opts.audience
-      });
-      res.json({ message: 'Authenticated', token, cod: user.cod});
+    if (user && (user.email === email) && passwordMatch && (user.inativo !== 1)){
+      const payload = { sub: user.cod, adm: user.adm };
+      const token = jwt.sign(payload, opts.secretOrKey,
+         {expiresIn: "10h"}
+        );
+      res.json({ message: 'Authenticated', token, cod: user.cod, isAdm: user.adm === 1});
     } else {
       res.status(401).json({ message: 'Invalid credentials' });
     }

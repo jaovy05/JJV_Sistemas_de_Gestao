@@ -6,7 +6,6 @@ import { mdiSquareEditOutline } from '@mdi/js';
 import { Sheet } from "@mui/joy";
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
-import SimpleAlert from '../Alerts/SuccessAlert';
 
 function TableTecido() {
   const [tecidos, setTecido] = React.useState([]);
@@ -85,7 +84,6 @@ function TableTecido() {
           const newTecido = response.data;
           setTecido([...tecidos, newTecido]);
           setNovoTecido({cod: '', nome: '', dsc: ''});
-          <SimpleAlert />
         } else {
           console.error('Erro ao cadastrar tecido');
         }

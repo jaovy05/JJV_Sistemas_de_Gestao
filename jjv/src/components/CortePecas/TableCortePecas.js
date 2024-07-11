@@ -6,7 +6,7 @@ import { mdiSquareEditOutline } from '@mdi/js';
 import { Sheet } from "@mui/joy";
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
-import SimpleAlert from '../Alerts/SuccessAlert';
+
 
 function TableCortePecas() {
   const [cortes, setCortePecas] = React.useState([]);
@@ -85,7 +85,6 @@ function TableCortePecas() {
           const newCorte = response.data;
           setCortePecas([...cortes, newCorte]);
           setNovoCorte({codp: '', tam: '', qtd: ''});
-          <SimpleAlert />
         } else {
           console.error('Erro ao cadastrar corte');
         }

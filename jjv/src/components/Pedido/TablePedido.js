@@ -84,7 +84,6 @@ function TablePedido() {
           setPedidos([...pedidos, newPedido]);
           setNovoPedido({ cod: '', pedido: '', op: '', comp: '', qtdp: '', qtdm: '', qtdg: '', qtdgg: '', qtdxgg: '', avm: '', obs: '', cnpjc: '', codf: '', codt: '' });
           window.location.reload();
-          <SimpleAlert />
         } else {
           console.error('Erro ao cadastrar pedido');
         }
