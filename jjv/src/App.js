@@ -38,6 +38,8 @@ import CadCortePecas from './components/CortePecas/CadCortePecas';
 import CadModelo from './components/Modelo/CadModelo';
 import CadTecido from './components/Tecido/CadTecido';
 import Desligamento from './components/Desligamento/desligamento';
+import Grafico from './components/Relatorio/Grafico';
+
 const drawerWidth = 300;
 
 const Main = styled('main', { shouldForwardProp: (prop) => prop !== 'open' })(
@@ -270,7 +272,7 @@ export default function App() {
                 {isAdm && <Route path='/modelo' element={<CadModelo />} />}
                 <Route path='/tecido' element={<CadTecido />} />
                 {isAdm && <Route path='/desligamento' element={<Desligamento />} />}
-                
+                {isAdm && <Route path='/grafico' element={<Grafico />} />}
               </Routes>
             </Box>
           </Main>

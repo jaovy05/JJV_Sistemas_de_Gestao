@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { Chart } from "react-google-charts";
-import { duration, easing } from '@mui/material';
 
 const Grafico = () => {
   const [dadosGrafico, setDadosGrafico] = useState([]);

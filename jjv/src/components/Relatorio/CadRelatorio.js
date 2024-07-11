@@ -10,7 +10,7 @@ const Relatorio = () => (
             alignItems: 'center', 
             marginBottom: '1em' 
             }}>
-              Relatório
+              
       </Typography>
     <TableRelatorio />
     </div>

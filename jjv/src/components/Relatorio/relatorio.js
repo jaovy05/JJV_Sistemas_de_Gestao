@@ -8,6 +8,7 @@ import {
 import { mdiSquareEditOutline } from '@mdi/js';
 import ModalClose from '@mui/joy/ModalClose';
 import Modal from '@mui/joy/Modal';
+import { useNavigate } from 'react-router-dom';
 
 function TableRelatorio() {
   const [relatorio, setRelatorios] = React.useState([]);
@@ -15,6 +16,7 @@ function TableRelatorio() {
   const [open, setOpen] = React.useState(false);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const navigate = useNavigate();
 
   const [novoRelatorio, setNovoRelatorio] = React.useState({
     terceirizado: '',
@@ -106,6 +108,11 @@ function TableRelatorio() {
     fetchRelatorio(novoRelatorio);
   };
 
+  const submitGrafico = async (e) => {
+    e.preventDefault();
+    navigate('/grafico');
+  };
+
   return (
     <Box component="form" sx={{ minWidth: 'sm', display: 'flex', flexDirection: 'column', gap: 3 }}>
       <Typography variant="h4" component="h1">Relatorio</Typography>
@@ -161,7 +168,7 @@ function TableRelatorio() {
         <Stack spacing={{ xs: 2 }} useFlexGap flexWrap="wrap" direction={{ sm: 'column', md: 'row' }} sx={{ minWidth: 1 }}>
           <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitRelatorio}>Filtrar</Button>
           <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitRelatorio}>Baixar pdf</Button>
-          <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitRelatorio}>Grafico</Button>
+          <Button variant="contained" color="other" sx={{ minWidth: isMobile ? '100%' : '20%' }} onClick={submitGrafico}>Grafico</Button>
 
         </Stack>
       </ThemeProvider>
