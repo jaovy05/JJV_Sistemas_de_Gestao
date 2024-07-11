@@ -1,4 +1,4 @@
-const db = require('./Database.js');
+const db = require('./database.js');
 const bcrypt = require("bcrypt");
 /* FUNCIONÁRIO */
 

@@ -18,7 +18,6 @@ const Grafico = () => {
         const dadosComCabecalho = [['Mês', 'Valor'], ...dadosFormatados];
         
         setDadosGrafico(dadosComCabecalho);
-        console.log(dadosComCabecalho)
       } catch (error) {
         console.error('Erro ao buscar dados do gráfico:', error);
       }

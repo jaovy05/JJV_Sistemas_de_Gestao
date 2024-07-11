@@ -27,7 +27,7 @@ function TableRelatorio() {
 
   const fetchRelatorio = async (filters) => {
     try {
-      const response = await axios.post("http://localhost:5000/relatorio", filters, {
+      const response = await axios.get("http://localhost:5000/relatorio", filters, {
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${localStorage.getItem('token')}`

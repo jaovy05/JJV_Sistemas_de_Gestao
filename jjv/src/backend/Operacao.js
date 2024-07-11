@@ -1,4 +1,4 @@
-const db = require('./Database.js');
+const db = require('./database.js');
 
 async function getOp(req, res)  {
     try {
