@@ -5,7 +5,7 @@ async function get(req, res) {
         const tecidos = await db.any(
             "select dsc, nome, cod from tecido;"
         );
-        res.status(200).json(tecidos);
+        res.status(201).json(tecidos);
     } catch (error) {
         if (error instanceof db.$config.pgp.errors.QueryResultError) {
             res.status(400).json({ error: "Erro no sql buscar tecido " + error.message });
@@ -24,6 +24,7 @@ async function put(req, res){
             "where cod = $3 returning cod;",
             [tecido.dsc, tecido.nome, cod]
         );
+        res.sendStatus(200)
     } catch (error) {
         if (error instanceof db.$config.pgp.errors.QueryResultError) {
             res.status(400).json({ error: "Erro no sql atualizar tecido " + error.message });
