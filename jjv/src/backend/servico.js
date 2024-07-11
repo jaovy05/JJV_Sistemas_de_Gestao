@@ -4,7 +4,7 @@ async function getSv(req, res){
     try {
       const servicoTer = await db.any(
         "select s.os, p.nome as ter, e.codp, e.tam_ct as tam, qtd_env as qtd, "+
-        "data_ent as datee, data_ent as datet, o.cod as op "+
+        "data_ent as datee, data_ent as datet, o.dsc as op "+
         "from servico as s "+
         "join serv_ter as st on st.oss = s.os "+
         "join terceirizado as t on t.cnpj = st.cnpjt " +
@@ -90,32 +90,32 @@ async function getSv(req, res){
 
       async function deleteSv(req, res) {
         try {
-          const os = parseInt(req.params);
-          await db.one(
-            "delete from servico "+
-            "where os = $1  "+
-            "returning os;",
-            [os]
-          );
-      
-          await db.one(
+          const os = parseInt(req.params.os);
+              
+          await db.none(
             "delete from encaminha "+
-            "where os_serv = $1 returning tam_ct, codp; ",
+            "where os_serv = $1; ",
             [os]
           );
       
-          await db.one(
+          await db.none(
             "delete from serv_ter "+
-            "where oss = $1  returning cnpj;",
+            "where oss = $1 ",
             [os]
           );
           
-          await db.one(
+          await db.none(
             "delete from serv_op "+
-            "where oss = $1 returning codop;",
+            "where oss = $1 ;",
             [os]
           );
-         
+
+          await db.none(
+            "delete from servico "+
+            "where os = $1 ",
+            [os]
+          );
+          res.sendStatus(200)
         } catch (error) {
           res.status(500).json({error});
         }

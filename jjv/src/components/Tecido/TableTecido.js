@@ -84,6 +84,7 @@ function TableTecido() {
           const newTecido = response.data;
           setTecido([...tecidos, newTecido]);
           setNovoTecido({cod: '', nome: '', dsc: ''});
+          window.location.reload();
         } else {
           console.error('Erro ao cadastrar tecido');
         }

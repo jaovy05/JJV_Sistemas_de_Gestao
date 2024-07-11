@@ -44,7 +44,11 @@ async function postOp(req, res) {
   async function deleteOp(req, res) {
     try {
       const cod = parseInt(req.params.cod);
-      console.log(cod);
+
+      await db.none(
+        "delete from serv_op where codop = $1",
+        [cod]
+      );
       const operacao = await db.one(
         "delete from operacao where cod = $1 " +
         "returning dsc;",

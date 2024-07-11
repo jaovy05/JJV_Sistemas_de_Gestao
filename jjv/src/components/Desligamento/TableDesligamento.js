@@ -59,6 +59,7 @@ function TableDesligamento() {
       });
       if (response.status === 200) {
         setDesligamentos(desligamentos.filter(desligamento => desligamento.cpfCnpj !== cpfCnpj));
+        window.location.reload();
       } else {
         console.error('Erro ao desligar funcionário', response.data);
       }
