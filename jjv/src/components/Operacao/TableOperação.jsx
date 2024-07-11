@@ -80,7 +80,7 @@ function TableOperacao() {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           },
         });
-        if (response.status === 200) {
+        if (response.status === 201) {
           const newOperacao = response.data;
           setOperacoes([...operacoes, newOperacao]);
           setNovaOperacao({ dsc: '',  valor: '' });

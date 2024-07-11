@@ -8,7 +8,8 @@ const jwt = require('jsonwebtoken');
 const cors = require('cors');
 const db = require('./Database.js');
 const bcrypt = require("bcrypt");
-const pessoas = require('./Pessoas.js')
+const pessoas = require('./Pessoas.js');
+const operacao = require('./Operacao.js');
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -82,15 +83,6 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.post('/logout', (req, res) => {
-  try {
-    res.status(200).send('Logout realizado com sucesso.');
-  } catch (error) {
-    console.error('Erro durante o logout:', error);
-    res.status(500).send('Erro interno durante o logout.');
-  }
-});
-
 app.post('/adm', async(req, res) => {
   const saltRounds = 9;
   try {
@@ -135,7 +127,6 @@ app.post('/funcionario', auth, pessoas.postFunc);
 
 app.put('/funcionario/:id', auth, pessoas.putFunc);
 
-
 /* CLIENTE */
 
 app.get('/cliente', auth, pessoas.getCli);
@@ -143,7 +134,6 @@ app.get('/cliente', auth, pessoas.getCli);
 app.post('/cliente', auth, pessoas.postCli);
 
 app.put('/cliente/:id', auth, pessoas.putCli);
-
 
 /* TERCEIRIZADO */
 
@@ -155,60 +145,13 @@ app.put('/terceirizado/:id', auth, pessoas.putTer);
 
 /* OPERAÇÃO */
 
-app.get('/operacao', auth, async(req, res) => {
-  try {
-    const operacoes = await db.any(
-      "select cod, valor, dsc from operacao;",
-    );
-    res.json(operacoes); 
-  } catch (error) {
-    res.status(500).send(error);
-  }
-});
+app.get('/operacao', auth, operacao.getOp);
 
-app.post('/operacao', auth, async(req, res) => {
-  try {
-    const operacao = req.body;
-    await db.none(
-      "insert into operacao (valor, dsc) "+
-      "values ($1, $2);",
-      [operacao.valor, operacao.dsc]
-    );
-    res.status(201).json(operacao);
-  } catch (error) {
-    res.status(500).json({error});
-  }
-});
+app.post('/operacao', auth, operacao.postOp);
 
-app.put('/operacao/:cod', auth, async(req, res) => {
-  try {
-    const cod = parseInt(req.params.cod);
-    const operacao = req.body;
-    const newOp = await db.one(
-      "update operacao set valor = $1, dsc = $2 "+
-      "where cod = $3 returning valor, dsc;",
-      [operacao.valor, operacao.dsc, cod]
-    );
-    res.status(200).json(newOp);
-  } catch (error) {
-    res.status(500).json({error});
-  }
-});
+app.put('/operacao/:cod', auth, operacao.putOp);
 
-app.delete('/operacao/:cod', auth, async(req, res) => {
-  try {
-    const cod = parseInt(req.params.cod);
-    console.log(cod);
-    const operacao = await db.one(
-      "delete from operacao where cod = $1 " +
-      "returning dsc;",
-      [cod]
-    );
-    res.status(200).json(operacao);
-  } catch (error) {
-    res.status(500).json({error});
-  }
-});
+app.delete('/operacao/:cod', auth, operacao.deleteOp);
 
 /* SERVICO */
 

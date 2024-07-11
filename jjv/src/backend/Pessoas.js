@@ -187,5 +187,4 @@ module.exports = {
     getFunc, postFunc, putFunc, 
     getCli, postCli, putCli,
     getTer, postTer, putTer,
-
 };

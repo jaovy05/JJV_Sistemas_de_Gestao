@@ -109,9 +109,6 @@ export default function App() {
   const sair = async () => {
     try {
       
-      await axios.post('http://localhost:5000/logout'
-      );
-      localStorage.removeItem('cod');
       localStorage.removeItem('token');
       setIsAdm(false);
       navigate('/');
