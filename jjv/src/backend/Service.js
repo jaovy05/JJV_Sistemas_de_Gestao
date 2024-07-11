@@ -14,8 +14,6 @@ const bcrypt = require("bcrypt");
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: '4provas_na_semana_é_pra_matar_qualquer_um_pqp',
-  issuer: 'accounts.examplesoft.com',
-  audience: 'yoursite.net'
 };
 
 const auth = passport.authenticate('jwt', { session: false });
@@ -71,7 +69,7 @@ app.post('/login', async (req, res) => {
        user.senha,
      );
 
-    if (user && (user.email === email) && passwordMatch && (user.inativo !== 1)){
+    if (user && passwordMatch && (user.inativo !== 1)){
       const payload = { sub: user.cod, adm: user.adm };
       const token = jwt.sign(payload, opts.secretOrKey,
          {expiresIn: "10h"}
@@ -116,6 +114,14 @@ app.post('/adm', async(req, res) => {
     if (error instanceof db.$config.pgp.errors.QueryResultError) 
       res.status(400).json({ error: "Erro ao cadastrar administrador: " + error.message });
     else  res.status(500).json({ error: error.message});
+  }
+});
+
+app.get('/check/user', auth, (req, res) => {
+  if (req.user) {
+    res.status(200).json({ isAdm: req.user.isAdm, userName: req.user.nome });
+  } else {
+    res.status(401).json({ message: 'Unauthorized' });
   }
 });
 // Rotas protegidas

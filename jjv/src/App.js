@@ -134,7 +134,7 @@ export default function App() {
           }
         });
 
-        if (response.data) {
+        if (response.status === 200) {
           setUserName(response.data.userName);
           setIsAdm(response.data.isAdm);
         }
@@ -259,17 +259,18 @@ export default function App() {
             <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'center', my: 4 }}>
               <Routes>
                 <Route path='/home' element={<Home />} />
-                <Route path='/funcionario' element={<CadastroFuncionario />} />
-                <Route path='/terceirizado' element={<CadTerc />} />
-                <Route path='/cliente' element={<CadCliente />} />
+                {isAdm && <Route path='/funcionario' element={<CadastroFuncionario />} />}
+                {isAdm && <Route path='/terceirizado' element={<CadTerc />} />}
+                {isAdm && <Route path='/cliente' element={<CadCliente />} />}
                 <Route path='/pedido' element={<CadastroPedido />} />
                 <Route path='/servico' element={<Servico />} />
-                <Route path='/operacao' element={<Operacao />} />
-                <Route path='/relatorio' element={<Relatorio />} />
+                {isAdm && <Route path='/operacao' element={<Operacao />} />}
+                {isAdm && <Route path='/relatorio' element={<Relatorio />} />}
                 <Route path='/corte' element={<CadCortePecas />} />
-                <Route path='/modelo' element={<CadModelo />} />
+                {isAdm && <Route path='/modelo' element={<CadModelo />} />}
                 <Route path='/tecido' element={<CadTecido />} />
-                <Route path='/desligamento' element={<Desligamento />} />
+                {isAdm && <Route path='/desligamento' element={<Desligamento />} />}
+                
               </Routes>
             </Box>
           </Main>
