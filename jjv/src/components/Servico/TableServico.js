@@ -10,55 +10,47 @@ import Sheet from '@mui/joy/Sheet';
 import Icon from '@mdi/react';
 import { mdiSquareEditOutline, mdiDeleteForeverOutline } from '@mdi/js';
 
-
-
-function TablePessoa() {
+function TableServico() {
   const [open, setOpen] = React.useState(false);
-  const [pessoas, setPessoas] = useState([]);
-  const [pessoaSelecionada, setPessoaSelecionada] = useState();
+  const [servicos, setServico] = useState([]);
+  const [servicoSelecionado, setServicoSelecionado] = useState();
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-
-  //busca pessoas na api
+  //busca servicos na api
   useEffect(() => {
-    const fetchPessoas = async () => {
+    const fetchServicos = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/cadastrar/pessoas', {
+        const response = await axios.get('http://localhost:5000/servico', {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
-        setPessoas(response.data);
+        setServico(response.data);
       } catch (error) {
-        console.error('Erro ao buscar pessoas', error);
+        console.error('Erro ao buscar serviço', error);
       }
     };
-    fetchPessoas();
+    fetchServicos();
   }, []);
-  //
-
 
   //abrir modal
-  const OpenModal = (pessoa) => {
-    setPessoaSelecionada(pessoa);
+  const OpenModal = (servico) => {
+    setServicoSelecionado(servico);
     setOpen(true);
   };
-  //
 
-
-  //atualiza 0 estado da pessoa selecionada
+  //atualiza 0 estado da servico selecionada
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setPessoaSelecionada(prevPessoa => ({ ...prevPessoa, [name]: value }));
+    setServicoSelecionado(prevServico => ({ ...prevServico, [name]: value }));
   };
-  //
 
-  //envia a requisição para editar pessoa[PUT]
-  const handleEditPessoa = async () => {
+  //envia a requisição para editar servico[PUT]
+  const handleEditServico = async () => {
     try {
-      const response = await axios.put(`http://localhost:5000/cadastrar/pessoas/${pessoaSelecionada.cod}`,
-        pessoaSelecionada,
+      const response = await axios.put(`http://localhost:5000/servico/${servicoSelecionado.os}`,
+        servicoSelecionado,
         {
           headers: {
             'Content-Type': 'application/json',
@@ -67,42 +59,55 @@ function TablePessoa() {
         });
 
       if (response.status === 200) {
-        setPessoas(pessoas.map(pessoa => pessoa.cod === pessoaSelecionada.cod ? pessoaSelecionada : pessoa));
+        setServico(servicos.map(servico => servico.os === servicoSelecionado.os ? servicoSelecionado : servico));
         setOpen(false);
       } else {
-        console.error('Erro ao editar pessoa');
+        console.error('Erro ao editar servico');
       }
     } catch (error) {
-      console.error('Erro ao editar pessoa', error);
+      console.error('Erro ao editar servico', error);
     }
   };
-  //
 
-  //seta o estado inicial da nova pessoa
-  const AdicionarPessoa = ({ addNewPessoa }) => {
-    const [novaPessoa, setNovaPessoa] = useState({ nome: '', email: '', date: '', endn: '', end_logra: '', telefone1: '' });
+  //seta o estado inicial da nova servico
+  const AdicionarServico = ({ addNewServico }) => {
+
+    const [novoServico, setNovoServico] = useState({ 
+            os: '',
+            data_ter: '',
+            data_esperada: '',
+            terceirizado: {
+              cnpj: '',
+            }, 
+            corte: {
+              qtd: 0,
+              tam: '',
+              codp: '',
+            },
+            ops: {
+              op1: ''
+            }
+        });
 
 
-    //adiciona nova pessoa
+    //adiciona nova servico
     const newPerson = (e) => {
       const { name, value } = e.target;
-      setNovaPessoa(prevPessoa => ({ ...prevPessoa, [name]: value }));
+      setNovoServico(prevServico => ({ ...prevServico, [name]: value }));
     };
-    //
 
     const handleDateChange = (event) => {
-      setNovaPessoa((prevPessoa) => ({
-        ...prevPessoa,
+      setNovoServico((prevServico) => ({
+        ...prevServico,
         date: event.target.value,
       }));
     };
 
-
-    //envia a requisição para adicionar pessoa[POST]
-    const AddPessoa = async () => {
+    //envia a requisição para adicionar servico[POST]
+    const AddServico = async () => {
       try {
-        const response = await axios.post('http://localhost:5000/cadastrar/pessoas',
-          novaPessoa,
+        const response = await axios.post('http://localhost:5000/servico',
+          novoServico,
           {
             headers: {
               'Content-Type': 'application/json',
@@ -111,20 +116,33 @@ function TablePessoa() {
           });
 
         if (response.status === 201) {
-          const novaPessoaAdicionada = response.data;
-          addNewPessoa(novaPessoaAdicionada);
-          setNovaPessoa({ nome: '', email: '', date: '', endn: '', end_logra: '', telefone1: '' });
+          const novoServicoAdicionado = response.data;
+          addNewServico(novoServicoAdicionado);
+          setNovoServico({ 
+            os: '',
+            data_ter: '',
+            data_esperada: '',
+            terceirizado: {
+              cnpj: '',
+            }, 
+            corte: {
+              qtd: 0,
+              tam: '',
+              codp: '',
+            },
+            ops: {
+              op1: '',
+            },
+        });
           window.location.reload(); //gambiarra para atualizar a página
         } else {
-          console.error(`Erro ao adicionar pessoa: ${response.status} - ${response.statusText}`);
+          console.error(`Erro ao adicionar serviço: ${response.status} - ${response.statusText}`);
         }
       } catch (error) {
-        console.error('Erro ao adicionar pessoas', error.message);
+        console.error('Erro ao adicionar serviços', error.message);
       }
     };
-    //
-
-
+    
     //criar as cores estilizadas
     const theme = createTheme({
       palette: {
@@ -140,19 +158,17 @@ function TablePessoa() {
 
     //criar colunas
     const columns = [
-      { id: 'cod', label: 'Código' },
-      { id: 'nome', label: 'Nome', },
-      { id: 'email', label: 'Email' },
-      { id: 'date', label: 'Data', align: 'right', },
-      { id: 'end_logra', label: 'Endereço', align: 'right', },
-      { id: 'endn', label: 'Número' },
-      { id: 'telefone1', label: 'Telefone' },
+      { id: 'os', label: 'OS'},
+      { id: 'ter', label: 'Terceirizado' },
+      { id: 'codp', label: 'Pedido'},
+      { id: 'tam', label: 'Tamanho'},
+      {id: 'qtd', label: 'Quantidade'},
+      { id: 'datee', label: 'Data Enviado', align: 'right', },
+      { id: 'datet', label: 'Data Recebido', align: 'right', },
+      {id: 'op', label: 'Operações'},
       { id: 'edit', label: 'Editar' },
       { id: 'delete', label: 'Deletar' }
     ];
-
-    // Format date
-
 
     function formatDate(dateString) {
       const date = new Date(dateString);
@@ -162,41 +178,35 @@ function TablePessoa() {
       return `${year}-${month}-${day}`;
     }
 
-
-
     //criar linhas popula a tabela
-    const rows = pessoas.map(pessoa => ({
-      ...pessoa,
-      date: formatDate(pessoa.date),
-      edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(pessoa)}>
+    const rows = servicos.map(servico => ({
+      ...servico,
+      date: formatDate(servico.date),
+      edit: <Tooltip title="Editar"><IconButton sx={{ color: 'warning.main' }} size="large" onClick={() => OpenModal(servico)}>
         <Icon path={mdiSquareEditOutline} size={1} />
       </IconButton></Tooltip>,
-      delete: <Tooltip title="Excluir"><IconButton sx={{ color: 'error.main' }} size="large" onClick={() => DeletePessoa(pessoa.cod)}>
+      delete: <Tooltip title="Excluir"><IconButton sx={{ color: 'error.main' }} size="large" onClick={() => DeleteServico(servico.os)}>
         <Icon path={mdiDeleteForeverOutline} size={1} />
       </IconButton></Tooltip>
     }));
 
-    //
-
-    //deletar pessoa
-    const DeletePessoa = async (cod) => {
+    //deletar servico
+    const DeleteServico = async (os) => {
       try {
-        const response = await axios.delete(`http://localhost:5000/cadastrar/pessoas/${cod}`, {
+        const response = await axios.delete(`http://localhost:5000/servico/${os}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem('token')}`
           }
         });
         if (response.status === 200) {
-          setPessoas(pessoas.filter(pessoa => pessoa.cod !== cod));
+          setServico(servicos.filter(servico => servico.os !== os));
         } else {
-          console.error('Erro ao deletar pessoa', response.data);
+          console.error('Erro ao deletar servico', response.data);
         }
       } catch (error) {
-        console.error('Erro ao deletar pessoa', error);
+        console.error('Erro ao deletar servico', error);
       }
     };
-    //
-
 
     //manipulação de paginação
     const handleChangePage = (event, newPage) => {
@@ -209,6 +219,13 @@ function TablePessoa() {
     }
     //
 
+    const commonTextFieldProps = (namep) => ({
+        color: 'green',
+        focused: true,
+        size: 'small',
+        onChange: newPerson,
+        name: namep,
+      });
 
     return (
       <Box component="form" sx={{
@@ -223,49 +240,39 @@ function TablePessoa() {
         <ThemeProvider theme={theme}>
           <Stack spacing={2}  useFlexGap flexWrap="wrap"
             direction={{ sm: 'column', md: 'row' }} sx={{ minWidth:1 }}>
-            <TextField
-              color='green'
-              focused
+            <TextField 
+                {...commonTextFieldProps('nome')}
               id='outlined-basic'
-              size="small"
               sx={{ width: '49%' }}
               label="Nome"
-              name='nome'
-              value={novaPessoa.nome}
-              onChange={newPerson}
+              value={novoServico.terceirizado.cnpj}
             />
             <TextField
-              color='green'
-              focused
-              size="small"
               sx={{ width: '49%' }}
-              label="Email"
-              name='email'
-              value={novaPessoa.email}
-              onChange={newPerson}
+              label="Ordem de serviço"
+              {...commonTextFieldProps('os')}
+              value={novoServico.os}
             />
           </Stack>
           <Stack spacing={2}  useFlexGap flexWrap="wrap"
             direction={{ sm: 'column', md: 'row' }} sx={{ minWidth:1 }}>
-          <TextField
-            color='green'
-            focused
-            size="small"
-            sx={{ width: '64%' }}
-            label="Endereço"
-            name='end_logra'
-            value={novaPessoa.end_logra}
-            onChange={newPerson}
+          <TextField         
+            sx={{ width: '30%' }}
+            label="Pedido"
+            {...commonTextFieldProps('pedido')}
+            value= {novoServico.corte.codp}
           />
           <TextField
-            color='green'
-            focused
-            size="small"
-            sx={{ width: '34%' }}
-            label="Número"
-            name='endn'
-            value={novaPessoa.endn}
-            onChange={newPerson}
+            sx={{ width: '15%' }}
+            label="Tamanho do corte"
+            {...commonTextFieldProps('corte')}
+            value={novoServico.corte.tam}
+          />
+          <TextField
+            sx={{ width: '15%' }}
+            label="Quantidade Corte"
+            {...commonTextFieldProps('qtd')}
+            value={novoServico.corte.tam}
           />
           </Stack>
           <Stack spacing={2}  useFlexGap flexWrap="wrap"
@@ -274,25 +281,34 @@ function TablePessoa() {
             color='green'
             focused
             size="small"
-            sx={{ width: '49%' }}
+            sx={{ width: '25%' }}
             type='date'
-            label="Data"
-            name='date'
-            value={novaPessoa.date}
+            label="Data de entrega"
+            name='datee'
+            value={novoServico.data_ter}
             onChange={handleDateChange}
           />
           <TextField
             color='green'
             focused
             size="small"
-            sx={{ width: '49%' }}
-            label="Telefone"
-            name='telefone1'
-            value={novaPessoa.telefone1}
-            onChange={newPerson}
+            sx={{ width: '40%' }}
+            type='date'
+            label="Data esperada de recebimento"
+            name='dater'
+            value={novoServico.data_esperada}
+            onChange={handleDateChange}
+          />
+          <TextField
+            
+            sx={{ width: '25%' }}
+            label="Operação"
+            {...commonTextFieldProps('op')}
+            value={novoServico.ops.op1}
+            
           />
           </Stack>
-          <Button variant="contained" color="other" sx={{ width: '25%' }} onClick={AddPessoa}>Adicionar Pessoa</Button>
+          <Button variant="contained" color="other" sx={{ width: '25%' }} onClick={AddServico}>Adicionar Serviço</Button>
         </ThemeProvider>
         <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
           <TableContainer >  
@@ -363,7 +379,7 @@ function TablePessoa() {
 
   return (
     <div>
-      <AdicionarPessoa addNewPessoa={(novaPessoa) => setPessoas([...pessoas, novaPessoa])} />
+      <AdicionarServico addNewServico={(novoServico) => setServico([...servicos, novoServico])} />
       <Modal
         aria-labelledby="modal-title"
         aria-describedby="modal-desc"
@@ -390,9 +406,9 @@ function TablePessoa() {
             fontWeight="lg"
             mb={1}
           >
-            Editar Pessoa
+            Editar serviço
           </Typography>
-          {pessoaSelecionada ? (
+          {servicoSelecionado ? (
             <Box sx={{
               width: '100%',
               display: 'flex',
@@ -410,7 +426,7 @@ function TablePessoa() {
                   sx={{ width: '45%' }}
                   label="Nome"
                   name='nome'
-                  value={pessoaSelecionada.nome}
+                  value={servicoSelecionado.terceirizado.cnpj}
                   onChange={handleChange}
                 />
                 <TextField
@@ -418,9 +434,9 @@ function TablePessoa() {
                   focused
                   size="small"
                   sx={{ width: '45%' }}
-                  label="Email"
-                  name='email'
-                  value={pessoaSelecionada.email}
+                  label="Ordem de Serviço"
+                  name='os'
+                  value={servicoSelecionado.os}
                   onChange={handleChange}
                 />
                 <TextField
@@ -428,9 +444,9 @@ function TablePessoa() {
                   focused
                   size="small"
                   sx={{ width: '65%' }}
-                  label="Endereço"
-                  name='end_logra'
-                  value={pessoaSelecionada.end_logra}
+                  label="Tamanho do Corte"
+                  name='corte'
+                  value={servicoSelecionado.corte.tam}
                   onChange={handleChange}
                 />
                 <TextField
@@ -438,9 +454,9 @@ function TablePessoa() {
                   focused
                   size="small"
                   sx={{ width: '30%' }}
-                  label="Número"
-                  name='endn'
-                  value={pessoaSelecionada.endn}
+                  label="Quantidade Corte"
+                  name='qtd'
+                  value={servicoSelecionado.corte.tam}
                   onChange={handleChange}
                 />
                 <TextField
@@ -449,12 +465,28 @@ function TablePessoa() {
                   size="small"
                   sx={{ width: '45%' }}
                   type='date'
-                  label="Data"
-                  name='date'
-                  value={pessoaSelecionada.date}
+                  label="Data de Entrega"
+                  name='datee'
+                  value={servicoSelecionado.data_ter}
                   onChange={(e) =>
-                    setPessoaSelecionada((prevPessoa) => ({
-                      ...prevPessoa,
+                    setServicoSelecionado((prevServico) => ({
+                      ...prevServico,
+                      date: e.target.value
+                    }))
+                  }
+                />
+                 <TextField
+                  color='green'
+                  focused
+                  size="small"
+                  sx={{ width: '45%' }}
+                  type='date'
+                  label="Data esperada"
+                  name='dater'
+                  value={servicoSelecionado.data_esperada}
+                  onChange={(e) =>
+                    setServicoSelecionado((prevServico) => ({
+                      ...prevServico,
                       date: e.target.value
                     }))
                   }
@@ -464,16 +496,16 @@ function TablePessoa() {
                   focused
                   size="small"
                   sx={{ width: '45%' }}
-                  label="Telefone"
-                  name='telefone1'
-                  value={pessoaSelecionada.telefone1}
+                  label="Operação"
+                  name='op'
+                  value={servicoSelecionado.ops.op1}
                   onChange={handleChange}
                 />
-                <Button variant="outlined" color='warning' sx={{ color: 'warning.main', width: '25%' }} onClick={handleEditPessoa}>Editar Pessoa</Button>
+                <Button variant="outlined" color='warning' sx={{ color: 'warning.main', width: '25%' }} onClick={handleEditServico}>Editar Serviço</Button>
               </ThemeProvider>
             </Box>
           ) : (
-            <Typography variant="body1">Nenhuma pessoa selecionada</Typography>
+            <Typography variant="body1">Nenhum serviço selecionado</Typography>
           )}
         </Sheet>
       </Modal>
@@ -481,4 +513,4 @@ function TablePessoa() {
   );
 }
 
-export default TablePessoa;
+export default TableServico;

@@ -1,54 +1,127 @@
 import React from 'react';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
-import { Grid } from '@mui/material';
+import axios from 'axios';
+import { Box, Grid, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TablePagination, TableRow, Tooltip, Typography, useMediaQuery } from '@mui/material';
+import Icon from '@mdi/react';
+import { mdiSquareEditOutline } from '@mdi/js';
 
-function createData(pedido, terceirizado, data, status) {
-  return { pedido, terceirizado, data, status };
-}
+function TableHome() {
+  const [dados, setDados] = React.useState([]);
+  const [page, setPage] = React.useState(0);
+  const [rowsPerPage, setRowsPerPage] = React.useState(10);
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24),
-  createData('Ice cream sandwich', 237, 9.0, 37),
-  createData('Eclair', 262, 16.0, 24),
-  createData('Cupcake', 305, 3.7, 67),
-  createData('Gingerbread', 356, 16.0, 49),
-];
+  React.useEffect(() => {
+    async function fetchHome() {
+      try {
+        const response = await axios.get("http://localhost:5000/tablehome");
+        setDados(response.data);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    fetchHome();
+  }, []);
 
-export default function BasicTable() {
+  const isMobile = useMediaQuery('(max-width:600px)');
+
+  const columns = [
+    { id: 'pedido', label: 'Pedido', minWidth: isMobile ? '100%' : 10 },
+    { id: 'nome', label: 'Terceirizado', minWidth: isMobile ? '100%' : 120 },
+    { id: 'dsc', label: 'Modelo', minWidth: isMobile ? '100%' : 120 },
+  ];
+
+  const rows = dados.map(cliente => ({
+    ...cliente, pedido: cliente.pedido, nome: cliente.nome, dsc: cliente.dsc}));
+
+      //manipulação de paginação
+      const handleChangePage = (event, newPage) => {
+        setPage(newPage);
+      };
+  
+      const handleChangeRowsPerPage = (event) => {
+        setRowsPerPage(event.target.value);
+        setPage(0);
+      }
+
   return (
-    <Grid container spacing={{ xs: 2, md: 3 }} columns={{ xs: 4, sm: 8, md: 12 }}>
-      <TableContainer component={Paper} sx={{ width: "100%", display: "table", tableLayout: "fixed" }}>
-        <Table sx={{ width: '100%' }} size="lg"
-          stripe="even"
-          variant="soft">
-          <TableHead>
-            <TableRow>
-              <TableCell>Pedido</TableCell>
-              <TableCell>Terceirizado</TableCell>
-              <TableCell>Data</TableCell>
-              <TableCell>Status</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow
-                key={row.pedido}
-              >
-                <TableCell>{row.pedido}</TableCell>
-                <TableCell>{row.terceirizado}</TableCell>
-                <TableCell>{row.data}</TableCell>
-                <TableCell>{row.status}</TableCell>
-              </TableRow>
+    <Grid container spacing={{ xs: 2 }}>
+    <Grid item xs={12}>
+      {isMobile ? (
+        dados.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((cliente) => (
+          <Box key={cliente.codp} sx={{ mb: 2, p: 2, border: "1px solid #ddd", borderRadius: 2, boxShadow: 1, width: "100%" }}>
+            {columns.map((column) => (
+              <Box key={column.id} sx={{ display: "flex", justifyContent: "space-between", py: 1 }}>
+                <Typography variant="subtitle2" sx={{ fontWeight: "bold" }}>{column.label}:</Typography>
+                <Typography variant="body2">
+                  {column.id === "edit" ? (
+                    <Tooltip title="Editar">
+                      <IconButton sx={{ color: 'warning.main' }}>
+                        <Icon path={mdiSquareEditOutline} size={1} />
+                      </IconButton>
+                    </Tooltip>
+                  ) : (
+                    cliente[column.id]
+                  )}
+                </Typography>
+              </Box>
             ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+          </Box>
+        ))
+      ) : (
+        <TableContainer component={Box} sx={{ display: "table", tableLayout: "fixed", overflowX: 'auto' }}>
+          <Table
+            size="small" aria-label="a dense table"
+            stripe="even"
+            variant="soft">
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ top: 57, minWidth: column.minWidth }}
+                    sx={{ minWidth: isMobile ? '100%' : '150px' }}
+                  >
+                    {column.label}
+                  </TableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  return (
+                    <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                      {columns.map((column) => {
+                        const value = row[column.id];
+                        return (
+                          <TableCell key={column.id} align={column.align} style={{ minWidth: column.minWidth }}>
+                            {column.format && typeof value === 'number'
+                              ? column.format(value)
+                              : value}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </Grid>
+    <TablePagination
+      rowsPerPageOptions={[5, 10]}
+      component="div"
+      count={rows.length}
+      rowsPerPage={rowsPerPage}
+      page={page}
+      onPageChange={handleChangePage}
+      onRowsPerPageChange={handleChangeRowsPerPage}
+    />
+  </Grid>
   );
+
 }
+
+export default TableHome;

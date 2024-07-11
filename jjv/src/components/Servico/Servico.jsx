@@ -1,5 +1,5 @@
-import './CadastroPessoa.css';
-import { Link } from "react-router-dom";
+// import '../CadastroPessoa/CadastroPessoa.css';
+
 import React from 'react';
 import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
@@ -7,19 +7,16 @@ import Drawer from '@mui/material/Drawer';
 import CssBaseline from '@mui/material/CssBaseline';
 import MuiAppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
-import List from '@mui/material/List';
+
 import Typography from '@mui/material/Typography';
-import Divider from '@mui/material/Divider';
+
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import Button from '@mui/material/Button';
-import ListItemButton from '@mui/material/ListItemButton';
+
+
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import TablePessoa from '../TablePessoa/TablePessoa';
-import Collapse from '@mui/material/Collapse';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import TableServico from './TableServico';
+
 
 const drawerWidth = 240;
 
@@ -67,17 +64,13 @@ const DrawerHeader = styled('div')(({ theme }) => ({
   justifyContent: 'flex-end',
 }));
 
-export default function PersistentDrawerLeft() {
+export default function Servico() {
   const [open, setOpen] = React.useState(true);
-  const [openCad, setOpenCadastro] = React.useState(false);
 
   const handleDrawerOpen = () => {
     setOpen(true);
   };
 
-  const handleDrawerClose = () => {
-    setOpen(false);
-  };
   const theme = createTheme({
     palette: {
       green: {main: '#3f5a40c5'},
@@ -85,9 +78,7 @@ export default function PersistentDrawerLeft() {
     },
   });
 
-  const dropDownCad = () => {
-    setOpenCadastro(!openCad);
-  };
+
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -120,41 +111,17 @@ export default function PersistentDrawerLeft() {
         anchor="left"
         open={open}
       >
-        <DrawerHeader>
-          <IconButton onClick={handleDrawerClose}>
-            {<ChevronLeftIcon color="success" />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <List>
-          <ListItemButton  sx={{display: 'flex', flexDirection: 'column', gap:1}}>
-            <ThemeProvider theme={theme}>
-            <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/">Sair</Link></Button>
-              <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/home">Início</Link></Button>
-              <Button variant="outlined" color="green" sx={{ width: 1 }} onClick={dropDownCad} className="link1">
-                Cadastros{openCad ? <ExpandLess /> : <ExpandMore />}
-              </Button>
-              <Collapse in={openCad} timeout="auto" unmountOnExit>
-                <List component="div" disablePadding>
-                  <ListItemButton sx={{ pl: 4 }}>
-                    <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/cadastrar/pessoas">Tabela Pessoas</Link></Button>
-                  </ListItemButton>
-                </List>
-              </Collapse>
+        
 
-              <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1">Teste</Link></Button>
-            </ThemeProvider>
-          </ListItemButton>
-        </List>
       </Drawer>
       <Main open={open}>
         <DrawerHeader />
         <Box sx={{  display: 'flex', flexDirection: 'row' , justifyContent: 'center', my: 4}}>
           <Typography variant="h6">
-            Tabela de Pessoas
+            Tabela de Serviços
           </Typography>
         </Box>
-        <TablePessoa/>
+        <TableServico/>
       </Main>
     </Box >
   );
