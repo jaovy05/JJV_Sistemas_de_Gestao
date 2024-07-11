@@ -232,7 +232,7 @@ export default function App() {
                     <List component="div" disablePadding>
                       <ListItemButton  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', }}>
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link1" to="/pedido">Cadastrar Pedido</Link></Button>
-                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2">Cadastrar Tecido</Link></Button>
+                        <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/tecido">Cadastrar Tecido</Link></Button>
                         {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/operacao">Cadastrar Operacao</Link></Button>}
                         <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/corte">Cadastrar Corte de Peças</Link></Button>
                         {isAdm && <Button variant="outlined" color="green" sx={{ width: 1 }}><Link className="link2" to="/modelo">Cadastrar Modelo</Link></Button>}
